@@ -4,6 +4,18 @@
 ## Why
 After I looked up the conversion from `geometry_mgs::Transform` to `Eigen::Affine3d` the 1000th I was finally able to build this ROS library. It helps me doing this kind of stuff not the 1001th time.
 
+## Include rosmath
+Clone rosmath into the `src` directory of your ROS workspace.
+Create a ROS package with `rosmath` as dependency.
+
+```console
+foo@bar:~/catkin_ws/src$ catkin_create_pkg mypackagename roscpp rosmath
+```
+
+Register your ROS-Nodes in your `CMakeLists.txt` 
+(see ROS-Tutorials). Now your should be able to use `rosmath`
+in your own code.
+
 ## Examples
 
 ### Simple math 
@@ -122,3 +134,8 @@ int main(int argc, char** argv)
     return 0;
 }
 ```
+
+### TODOs
+- More math
+- Include Stamped messages/transformes: Throw proper errors if source CS of transformation missmatches the coordinate system of the Stamped
+- ...
