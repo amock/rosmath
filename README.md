@@ -8,7 +8,7 @@ After I looked up the conversion from `geometry_mgs::Transform` to `Eigen::Affin
 
 ### Simple math 
 
-Doing math directly with commonly used ROS messages.
+Doing math with commonly used ROS messages.
 
 ```c++
 #include <ros/ros.h>
