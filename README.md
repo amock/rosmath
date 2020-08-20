@@ -102,6 +102,7 @@ With the first options you choose to not use any of rosmaths namespaces. Then yo
 - `+`: `add`
 - `-`: `sub`,`neg`
 - `*`: `mult`, `dot`
+- `<<=`: `convert`
 
 The second option consists of using only the operators like:
 `using rosmath::operator<<=;`. If you want to use every operator
