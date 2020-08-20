@@ -118,7 +118,6 @@ catkin_package(
         roscpp 
         rospy 
         sensor_msgs
-        eigen_conversions # TODO remove this
     DEPENDS 
         EIGEN3
 )
