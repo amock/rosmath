@@ -81,3 +81,44 @@ int main(int argc, char** argv)
     return 0;
 }
 ```
+
+### Namespaces
+Maybe you dont want to use `using namespace rosmath;` in every
+of your projects. In this case there are two options to choose.
+With the first options you choose to not use any of rosmaths namespaces. Then you may use the operators equivalent functions instead like:
+- `~`: `inv`
+- `+`: `add`
+- `-`: `sub`,`neg`
+- `*`: `mult`, `dot`
+
+The second option consists of using only the operators like:
+`using rosmath::operator<<=;`. If you want to use every operator
+then you may choose to include the operator using-directives bundled in `rosmath/usingoperators.h` as you can see here:
+
+```c++
+#include <ros/ros.h>
+#include <rosmath/rosmath.h>
+#include <rosmath/usingoperators.h>
+
+int main(int argc, char** argv)
+{
+    ros::init(argc, argv, "rosmath_example_namespace");
+
+    // transformations
+    geometry_msgs::Point p;
+    geometry_msgs::Transform T;
+    auto p_transformed = T * p;
+
+    geometry_msgs::Quaternion q;
+    auto p_rotated = q * p;
+
+    // norm
+    double norm = rosmath::norm(p_transformed);
+    double sum = rosmath::sum(p_transformed);
+
+    // inverse
+    auto Tinv = ~T;
+
+    return 0;
+}
+```

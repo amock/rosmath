@@ -214,6 +214,21 @@ target_link_libraries(${PROJECT_NAME}_example_conversions
   rosmath
 )
 
+
+add_executable(${PROJECT_NAME}_example_namespace
+    examples/namespace.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_example_namespace
+    ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+    ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_example_namespace
+  ${catkin_LIBRARIES}
+  rosmath
+)
+
 #############
 ## Install ##
 #############
