@@ -75,7 +75,7 @@ int main(int argc, char** argv)
     Eigen::Quaterniond qeig;
     Eigen::Vector3d peig;
 
-    // Convertion anything into everything
+    // Convert anything into everything
     p <<= v;
     v <<= p;
     peig <<= p;
