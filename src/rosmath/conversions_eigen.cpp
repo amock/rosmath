@@ -1,9 +1,6 @@
 #include "rosmath/conversions_eigen.h"
 #include "rosmath/conversions.h"
 
-// TODO remove this dependency
-// #include <eigen_conversions/eigen_msg.h>
-
 namespace rosmath {
 
 // POINTS
@@ -201,5 +198,20 @@ geometry_msgs::Transform& operator<<=(
     convert(from, to);
     return to;
 }
+
+Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
+                                const geometry_msgs::Pose& from)
+{
+    convert(from, to);
+    return to;
+}
+
+geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
+                                    const Eigen::Affine3d& from)
+{
+    convert(from, to);
+    return to;
+}
+
 
 } // namespace rosmath

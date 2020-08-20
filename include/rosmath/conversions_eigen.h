@@ -38,7 +38,6 @@ void convert(   const geometry_msgs::Quaternion& from,
 void convert(   const Eigen::Quaterniond& from,
                 geometry_msgs::Quaternion& to);
 
-
 // TRANSFORMATIONS
 void convert(   const geometry_msgs::Transform& from,
                 Eigen::Affine3d& to);
@@ -51,13 +50,6 @@ void convert(   const geometry_msgs::Pose& from,
 
 void convert(   const Eigen::Affine3d& from,
                 geometry_msgs::Pose& to);
-
-void convert(   const geometry_msgs::Pose& from,
-                geometry_msgs::Transform& to);
-
-void convert(   const geometry_msgs::Transform& from,
-                geometry_msgs::Pose& to);
-
 
 ///////////////////////////////////////////
 //
@@ -98,6 +90,12 @@ Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to,
 
 geometry_msgs::Transform& operator<<=(  geometry_msgs::Transform& to, 
                                         const Eigen::Affine3d& from);
+
+Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
+                                const geometry_msgs::Pose& from);
+
+geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
+                                    const Eigen::Affine3d& from);
 
 
 } // namespace rosmath

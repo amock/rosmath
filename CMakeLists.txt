@@ -185,6 +185,35 @@ target_link_libraries(${PROJECT_NAME}_math_test_node
   rosmath
 )
 
+add_executable(${PROJECT_NAME}_example_minimal
+    examples/minimal.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_example_minimal
+    ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+    ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_example_minimal
+  ${catkin_LIBRARIES}
+  rosmath
+)
+
+
+add_executable(${PROJECT_NAME}_example_conversions
+    examples/conversions.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_example_conversions
+    ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+    ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_example_conversions
+  ${catkin_LIBRARIES}
+  rosmath
+)
+
 #############
 ## Install ##
 #############
