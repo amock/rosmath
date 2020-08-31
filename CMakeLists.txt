@@ -135,9 +135,10 @@ include_directories(
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/rosmath.cpp
   src/${PROJECT_NAME}/conversions.cpp
   src/${PROJECT_NAME}/conversions_eigen.cpp
+  src/${PROJECT_NAME}/math.cpp
+  src/${PROJECT_NAME}/misc.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -181,6 +182,20 @@ add_dependencies(${PROJECT_NAME}_math_test_node
 )
 
 target_link_libraries(${PROJECT_NAME}_math_test_node 
+  ${catkin_LIBRARIES}
+  rosmath
+)
+
+add_executable(${PROJECT_NAME}_misc_test_node 
+    src/misc_test.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_misc_test_node 
+    ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+    ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_misc_test_node 
   ${catkin_LIBRARIES}
   rosmath
 )

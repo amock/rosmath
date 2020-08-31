@@ -138,6 +138,7 @@ int main(int argc, char** argv)
 
 ### TODOs
 - More math
+- More messages (sensor_msgs, nav_msgs)
 - Include Stamped messages/transformes: Throw proper errors if source CS of transformation missmatches the coordinate system of the Stamped
 - Documentation. Code, Doxygen, etc.
 - Advanced examples
