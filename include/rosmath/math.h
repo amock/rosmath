@@ -109,6 +109,9 @@ geometry_msgs::Transform mult(  const geometry_msgs::Transform& A,
 geometry_msgs::Quaternion mult(  const geometry_msgs::Quaternion& a, 
                                 const geometry_msgs::Quaternion& b);
 
+geometry_msgs::Pose mult(  const geometry_msgs::Transform& T, 
+                                const geometry_msgs::Pose& p);
+
 // stamped
 geometry_msgs::TransformStamped mult(
     const geometry_msgs::TransformStamped& A,
@@ -117,6 +120,10 @@ geometry_msgs::TransformStamped mult(
 geometry_msgs::PointStamped mult(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PointStamped& p);
+
+geometry_msgs::PoseStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseStamped& p);
 
 // DIVIDE
 geometry_msgs::Point        div(const geometry_msgs::Point& p, 
@@ -357,6 +364,10 @@ geometry_msgs::Quaternion operator*(
     const geometry_msgs::Quaternion& a,
     const geometry_msgs::Quaternion& b);
 
+geometry_msgs::Pose operator*(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::Pose& p);
+
 // STAMPED
 geometry_msgs::TransformStamped operator*(
     const geometry_msgs::TransformStamped& A,
@@ -365,6 +376,10 @@ geometry_msgs::TransformStamped operator*(
 geometry_msgs::PointStamped operator*(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PointStamped& p);
+
+geometry_msgs::PoseStamped operator*(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseStamped& p);
 
 geometry_msgs::Point operator*=(  
     geometry_msgs::Point& p,

@@ -339,6 +339,17 @@ geometry_msgs::Quaternion mult(  const geometry_msgs::Quaternion& a,
     return qret;
 }
 
+geometry_msgs::Pose mult(  const geometry_msgs::Transform& T, 
+                                const geometry_msgs::Pose& p)
+{
+    geometry_msgs::Pose ret;
+    geometry_msgs::Transform pt;
+    pt <<= p;
+    pt = T * pt;
+    ret <<= pt; 
+    return ret;
+}
+
 geometry_msgs::TransformStamped mult(  
     const geometry_msgs::TransformStamped& A, 
     const geometry_msgs::TransformStamped& B)
@@ -381,6 +392,29 @@ geometry_msgs::PointStamped mult(
     ret.header.frame_id = T.header.frame_id;
     ret.header.stamp = p.header.stamp;
     ret.point = T.transform * p.point;
+    return ret;
+}
+
+geometry_msgs::PoseStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseStamped& p)
+{
+    geometry_msgs::PoseStamped ret;
+    if(T.child_frame_id != p.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * p{" + p.header.frame_id 
+            + "}\nneed: p{B} = T{A->B} * p{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + p.header.frame_id
+            );
+    }
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = p.header.stamp;
+    
+    // actual transformation
+    ret.pose = T.transform * p.pose;
+
     return ret;
 }
 
@@ -962,6 +996,14 @@ geometry_msgs::Quaternion operator*(
     return mult(a, b);
 }
 
+
+geometry_msgs::Pose operator*(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::Pose& p)
+{
+    return mult(T, p);
+}
+
 // STAMPED
 geometry_msgs::TransformStamped operator*(
     const geometry_msgs::TransformStamped& A,
@@ -973,6 +1015,13 @@ geometry_msgs::TransformStamped operator*(
 geometry_msgs::PointStamped operator*(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PointStamped& p)
+{
+    return mult(T, p);
+}
+
+geometry_msgs::PoseStamped operator*(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseStamped& p)
 {
     return mult(T, p);
 }

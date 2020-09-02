@@ -154,6 +154,22 @@ bool testStamped()
     }
     ret &= exception_throwed;
 
+    // PoseStamped
+    geometry_msgs::PoseStamped pose_cam;
+    pose_cam.header.frame_id = "camera_optical";
+    pose_cam.pose.position.y = 5.0;
+    identity(pose_cam.pose.orientation);
+
+    auto pose_map = D * pose_cam;
+
+    exception_throwed = false;
+    try {
+        ~D * pose_cam;
+    } catch(TransformException ex) {
+        exception_throwed = true;
+    }
+    ret &= exception_throwed;
+
     return ret;
 }
 
