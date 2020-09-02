@@ -14,9 +14,9 @@
 // TODO
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/AccelStamped.h>
-#include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/InertiaStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
+#include <geometry_msgs/TwistStamped.h>
 
 // TODO covs
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
@@ -32,6 +32,19 @@ namespace rosmath {
 
 constexpr double EPS_DBL = std::numeric_limits<double>::epsilon() * 10.0;
 constexpr float EPS_FLT = std::numeric_limits<float>::epsilon() * 10.0;
+
+
+geometry_msgs::Vector3 RPY( const double& roll,
+                            const double& pitch,
+                            const double& yaw);
+
+geometry_msgs::Quaternion rpy2quat(const double& roll, 
+                                   const double& pitch,
+                                   const double& yaw);
+geometry_msgs::Quaternion rpy2quat(const geometry_msgs::Vector3& rpy);
+
+geometry_msgs::Vector3 quat2rpy(const geometry_msgs::Quaternion& q);
+
 
 // functions
 geometry_msgs::Point    neg(const geometry_msgs::Point& p);
@@ -130,6 +143,15 @@ geometry_msgs::Polygon mult(  const geometry_msgs::Transform& T,
 geometry_msgs::Accel mult( const geometry_msgs::Transform& T,
                             const geometry_msgs::Accel& a);
 
+geometry_msgs::Inertia mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Inertia& inertia);
+
+geometry_msgs::Wrench mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Wrench& w);
+
+geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Twist& twist);
+
 // stamped
 geometry_msgs::TransformStamped mult(
     const geometry_msgs::TransformStamped& A,
@@ -138,6 +160,10 @@ geometry_msgs::TransformStamped mult(
 geometry_msgs::PointStamped mult(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PointStamped& p);
+
+geometry_msgs::Vector3Stamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::Vector3Stamped& v);
 
 geometry_msgs::PoseStamped mult(
     const geometry_msgs::TransformStamped& T,

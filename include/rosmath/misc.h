@@ -6,17 +6,6 @@
 namespace rosmath {
 
 
-geometry_msgs::Vector3 RPY(   const double& roll,
-                            const double& pitch,
-                            const double& yaw);
-
-geometry_msgs::Quaternion rpy2quat(const double& roll, 
-                                   const double& pitch,
-                                   const double& yaw);
-geometry_msgs::Quaternion rpy2quat(const geometry_msgs::Vector3& rpy);
-
-geometry_msgs::Vector3 quat2rpy(const geometry_msgs::Quaternion& q);
-
 geometry_msgs::Quaternion ros2optical();
 
 geometry_msgs::Quaternion ros2optical(

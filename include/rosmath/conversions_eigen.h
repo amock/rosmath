@@ -38,6 +38,12 @@ void convert(   const geometry_msgs::Quaternion& from,
 void convert(   const Eigen::Quaterniond& from,
                 geometry_msgs::Quaternion& to);
 
+void convert(   const geometry_msgs::Quaternion& from,
+                Eigen::Matrix3d& to);
+
+void convert(   const Eigen::Matrix3d& from,
+                geometry_msgs::Quaternion& to);
+
 // TRANSFORMATIONS
 void convert(   const geometry_msgs::Transform& from,
                 Eigen::Affine3d& to);
@@ -83,6 +89,13 @@ Eigen::Quaterniond& operator<<=(    Eigen::Quaterniond& to,
 
 geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
                                         const Eigen::Quaterniond& from);
+
+Eigen::Matrix3d& operator<<=(    Eigen::Matrix3d& to,
+                                    const geometry_msgs::Quaternion& from);
+
+geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
+                                        const Eigen::Matrix3d& from);
+
 
 // TRANSFORMATIONS
 Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 

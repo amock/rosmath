@@ -1,47 +1,7 @@
 #include "rosmath/misc.h"
 #include <Eigen/Dense>
 
-
 namespace rosmath {
-
-geometry_msgs::Vector3 RPY(   const double& roll,
-                            const double& pitch,
-                            const double& yaw)
-{
-    geometry_msgs::Vector3 rpy;
-    rpy.x = roll;
-    rpy.y = pitch;
-    rpy.z = yaw;
-    return rpy;
-}
-
-geometry_msgs::Quaternion rpy2quat(const geometry_msgs::Vector3& rpy)
-{
-    return rpy2quat(rpy.x, rpy.y, rpy.z);
-}
-
-geometry_msgs::Quaternion rpy2quat(const double& roll, 
-                                   const double& pitch,
-                                   const double& yaw)
-{
-    Eigen::Quaterniond qeig;
-    qeig = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX())
-        * Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY())
-        * Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ());
-    geometry_msgs::Quaternion q;
-    q <<= qeig;
-    return q;
-}
-
-geometry_msgs::Vector3 quat2rpy(const geometry_msgs::Quaternion& q)
-{
-    Eigen::Quaterniond qeig;
-    qeig <<= q;
-    Eigen::Vector3d euler = qeig.toRotationMatrix().eulerAngles(0, 1, 2);
-    geometry_msgs::Vector3 p;
-    p <<= euler;
-    return p;
-}
 
 geometry_msgs::Quaternion ros2optical()
 {

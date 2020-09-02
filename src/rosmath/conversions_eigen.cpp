@@ -69,6 +69,21 @@ void convert(   const Eigen::Quaterniond& from,
     to.w = from.w();
 }
 
+void convert(   const geometry_msgs::Quaternion& from,
+                Eigen::Matrix3d& to)
+{
+    Eigen::Quaterniond qeig;
+    convert(from, qeig);
+    to = qeig.toRotationMatrix();
+}
+
+void convert(   const Eigen::Matrix3d& from,
+                geometry_msgs::Quaternion& to)
+{
+    Eigen::Quaterniond q(from);
+    convert(q, to);
+}
+
 // TRANSFORMATIONS
 
 void convert(   const geometry_msgs::Transform& from,
@@ -176,6 +191,23 @@ Eigen::Quaterniond& operator<<=(
 geometry_msgs::Quaternion& operator<<=(
     geometry_msgs::Quaternion& to,
     const Eigen::Quaterniond& from)
+{
+    convert(from, to);
+    return to;
+}
+
+
+Eigen::Matrix3d& operator<<=(    
+    Eigen::Matrix3d& to,
+    const geometry_msgs::Quaternion& from)
+{
+    convert(from, to);
+    return to;
+}
+
+geometry_msgs::Quaternion& operator<<=( 
+    geometry_msgs::Quaternion& to,
+    const Eigen::Matrix3d& from)
 {
     convert(from, to);
     return to;

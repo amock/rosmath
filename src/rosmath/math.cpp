@@ -4,7 +4,6 @@
 #include "rosmath/conversions.h"
 #include "rosmath/conversions_eigen.h"
 #include "rosmath/exceptions.h"
-#include "rosmath/misc.h"
 
 #include <Eigen/Dense>
 
@@ -12,6 +11,47 @@
 namespace rosmath {
 
 // Functions
+
+
+geometry_msgs::Vector3 RPY(   const double& roll,
+                            const double& pitch,
+                            const double& yaw)
+{
+    geometry_msgs::Vector3 rpy;
+    rpy.x = roll;
+    rpy.y = pitch;
+    rpy.z = yaw;
+    return rpy;
+}
+
+geometry_msgs::Quaternion rpy2quat(const geometry_msgs::Vector3& rpy)
+{
+    return rpy2quat(rpy.x, rpy.y, rpy.z);
+}
+
+geometry_msgs::Quaternion rpy2quat(const double& roll, 
+                                   const double& pitch,
+                                   const double& yaw)
+{
+    Eigen::Quaterniond qeig;
+    qeig = Eigen::AngleAxisd(roll, Eigen::Vector3d::UnitX())
+        * Eigen::AngleAxisd(pitch, Eigen::Vector3d::UnitY())
+        * Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ());
+    geometry_msgs::Quaternion q;
+    q <<= qeig;
+    return q;
+}
+
+geometry_msgs::Vector3 quat2rpy(const geometry_msgs::Quaternion& q)
+{
+    Eigen::Quaterniond qeig;
+    qeig <<= q;
+    Eigen::Vector3d euler = qeig.toRotationMatrix().eulerAngles(0, 1, 2);
+    geometry_msgs::Vector3 p;
+    p <<= euler;
+    return p;
+}
+
 bool equal( const geometry_msgs::Point& a,
             const geometry_msgs::Point& b)
 {
@@ -291,14 +331,19 @@ geometry_msgs::Vector3 mult(
     const geometry_msgs::Transform& T, 
     const geometry_msgs::Vector3& p)
 {
-    Eigen::Vector3d p_eigen;
-    p_eigen <<= p;
-    Eigen::Affine3d aff;
-    aff <<= T;
-    Eigen::Vector3d ret_eigen = aff * p_eigen;
-    geometry_msgs::Vector3 ret;
-    ret <<= ret_eigen;
-    return ret;
+    // Eigen::Vector3d p_eigen;
+    // p_eigen <<= p;
+    // Eigen::Affine3d aff;
+    // aff <<= T;
+    // Eigen::Vector3d ret_eigen = aff * p_eigen;
+    // geometry_msgs::Vector3 ret;
+    // ret <<= ret_eigen;
+    
+    // WRONG 
+    // vector3 is only direction: http://docs.ros.org/api/geometry_msgs/html/msg/Vector3.html
+    // so apply only rotation
+
+    return mult(T.rotation, p);
 }
 
 geometry_msgs::Vector3 mult(
@@ -366,7 +411,6 @@ geometry_msgs::Polygon mult(  const geometry_msgs::Transform& T,
     return ret;
 }
 
-
 geometry_msgs::Accel mult( const geometry_msgs::Transform& T,
                             const geometry_msgs::Accel& a)
 {
@@ -375,7 +419,56 @@ geometry_msgs::Accel mult( const geometry_msgs::Transform& T,
     ret.angular = quat2rpy(T.rotation * rpy2quat(a.angular));
     return ret;
 }
-                
+
+geometry_msgs::Inertia mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Inertia& inertia)
+{
+    geometry_msgs::Inertia ret;
+    // TODO: check if this is correct
+    Eigen::Matrix3d R, ieig, ieig_transformed;
+    R <<= T.rotation;
+
+    ieig(0,0) = inertia.ixx;
+    ieig(1,1) = inertia.iyy;
+    ieig(2,2) = inertia.izz;
+    ieig(0,1) = inertia.ixy;
+    ieig(1,0) = inertia.ixy;
+    ieig(0,2) = inertia.ixz;
+    ieig(2,0) = inertia.ixz;
+    ieig(1,2) = inertia.iyz;
+    ieig(2,1) = inertia.iyz;
+
+    ieig_transformed = R * ieig;
+
+    ret.m = inertia.m;
+    ret.com = T * inertia.com;
+    ret.ixx = ieig_transformed(0,0);
+    ret.iyy = ieig_transformed(1,1);
+    ret.izz = ieig_transformed(2,2);
+    ret.ixy = ieig_transformed(0,1);
+    ret.ixz = ieig_transformed(0,2);
+    ret.iyz = ieig_transformed(1,2);
+
+    return ret;
+}
+
+geometry_msgs::Wrench mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Wrench& w)
+{
+    geometry_msgs::Wrench ret;
+    ret.force = T.rotation * w.force;
+    ret.torque = quat2rpy(T.rotation * rpy2quat(w.torque));
+    return ret;
+}
+
+geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
+                            const geometry_msgs::Twist& twist)
+{
+    geometry_msgs::Twist ret;
+    ret.linear = T.rotation * twist.linear;
+    ret.angular = quat2rpy(T.rotation * rpy2quat(twist.angular));
+    return ret;
+}
 
 // STAMPED
 geometry_msgs::TransformStamped mult(  
@@ -420,6 +513,26 @@ geometry_msgs::PointStamped mult(
     ret.header.frame_id = T.header.frame_id;
     ret.header.stamp = p.header.stamp;
     ret.point = T.transform * p.point;
+    return ret;
+}
+
+geometry_msgs::Vector3Stamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::Vector3Stamped& v)
+{
+    geometry_msgs::Vector3Stamped ret;
+    if(T.child_frame_id != v.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * v{" + v.header.frame_id 
+            + "}\nrequired: p{B} = T{A->B} * v{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + v.header.frame_id
+            );
+    }
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = v.header.stamp;
+    ret.vector = T.transform * v.vector;
     return ret;
 }
 
