@@ -4,6 +4,7 @@
 #include "rosmath/conversions.h"
 #include "rosmath/conversions_eigen.h"
 #include "rosmath/exceptions.h"
+#include "rosmath/misc.h"
 
 #include <Eigen/Dense>
 
@@ -339,8 +340,8 @@ geometry_msgs::Quaternion mult(  const geometry_msgs::Quaternion& a,
     return qret;
 }
 
-geometry_msgs::Pose mult(  const geometry_msgs::Transform& T, 
-                                const geometry_msgs::Pose& p)
+geometry_msgs::Pose mult(   const geometry_msgs::Transform& T, 
+                            const geometry_msgs::Pose& p)
 {
     geometry_msgs::Pose ret;
     geometry_msgs::Transform pt;
@@ -350,6 +351,33 @@ geometry_msgs::Pose mult(  const geometry_msgs::Transform& T,
     return ret;
 }
 
+geometry_msgs::Polygon mult(  const geometry_msgs::Transform& T, 
+                              const geometry_msgs::Polygon& p)
+{
+    geometry_msgs::Polygon ret;
+    ret.points.resize(p.points.size());
+    for(int i=0; i<p.points.size(); i++)
+    {
+        geometry_msgs::Point point;
+        point <<= p.points[i];
+        ret.points[i] <<= T * point;
+    }
+
+    return ret;
+}
+
+
+geometry_msgs::Accel mult( const geometry_msgs::Transform& T,
+                            const geometry_msgs::Accel& a)
+{
+    geometry_msgs::Accel ret;
+    ret.linear = T.rotation * a.linear;
+    ret.angular = quat2rpy(T.rotation * rpy2quat(a.angular));
+    return ret;
+}
+                
+
+// STAMPED
 geometry_msgs::TransformStamped mult(  
     const geometry_msgs::TransformStamped& A, 
     const geometry_msgs::TransformStamped& B)
@@ -363,7 +391,7 @@ geometry_msgs::TransformStamped mult(
         throw TransformException(
             "\nCould not do transformation T{" + A.child_frame_id + "->" + A.header.frame_id 
             + "} * T{" + B.child_frame_id + "->" + B.header.frame_id 
-            + "}\nneed: T{A->B} = T{X->B} * T{A->X}\n"
+            + "}\nrequired: T{A->B} = T{X->B} * T{A->X}\n"
             + "mismatched frames: " + A.child_frame_id + " != " + B.header.frame_id
             );
     }
@@ -385,7 +413,7 @@ geometry_msgs::PointStamped mult(
         throw TransformException(
             "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
             + "} * p{" + p.header.frame_id 
-            + "}\nneed: p{B} = T{A->B} * p{A}\n"
+            + "}\nrequired: p{B} = T{A->B} * p{A}\n"
             + "mismatched frames: " + T.child_frame_id + " != " + p.header.frame_id
             );
     }
@@ -405,7 +433,7 @@ geometry_msgs::PoseStamped mult(
         throw TransformException(
             "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
             + "} * p{" + p.header.frame_id 
-            + "}\nneed: p{B} = T{A->B} * p{A}\n"
+            + "}\nrequired: p{B} = T{A->B} * p{A}\n"
             + "mismatched frames: " + T.child_frame_id + " != " + p.header.frame_id
             );
     }

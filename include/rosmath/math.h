@@ -9,6 +9,18 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/QuaternionStamped.h>
+#include <geometry_msgs/PoseStamped.h>
+
+// TODO
+#include <geometry_msgs/PolygonStamped.h>
+#include <geometry_msgs/AccelStamped.h>
+#include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/InertiaStamped.h>
+#include <geometry_msgs/WrenchStamped.h>
+
+// TODO covs
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+
 
 // internal deps
 #include "conversions.h"
@@ -111,6 +123,12 @@ geometry_msgs::Quaternion mult(  const geometry_msgs::Quaternion& a,
 
 geometry_msgs::Pose mult(  const geometry_msgs::Transform& T, 
                                 const geometry_msgs::Pose& p);
+
+geometry_msgs::Polygon mult(  const geometry_msgs::Transform& T, 
+                                const geometry_msgs::Polygon& p);
+
+geometry_msgs::Accel mult( const geometry_msgs::Transform& T,
+                            const geometry_msgs::Accel& a);
 
 // stamped
 geometry_msgs::TransformStamped mult(
