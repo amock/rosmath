@@ -84,6 +84,18 @@ void convert(   const Eigen::Matrix3d& from,
     convert(q, to);
 }
 
+void convert(   const Eigen::Matrix3d& from, 
+                Eigen::Quaterniond& to)
+{
+    to = from;
+}
+
+void convert(   const Eigen::Quaterniond& from, 
+                Eigen::Matrix3d& to)
+{
+    to = from.toRotationMatrix();
+}
+
 // TRANSFORMATIONS
 
 void convert(   const geometry_msgs::Transform& from,
@@ -124,6 +136,37 @@ void convert(   const Eigen::Affine3d& from,
     Eigen::Quaterniond q(from.rotation());
     convert(q, to.orientation);
     convert(from.translation(), to.position);
+}
+
+// OTHER
+// void convert(   const boost::array<double, 36>& covdata);
+
+void convert(   const std::vector<double>& from, 
+                Eigen::MatrixXd& to)
+{
+    int N = sqrt(from.size());
+
+    if(N*N != from.size())
+    {
+        // ERROR
+        throw std::runtime_error("Cannot find quadratic matrix size");
+    }
+    to.resize(N,N);
+    for(int i=0; i<from.size(); i++)
+    {
+        to(i / N, i % N) = from[i];
+    }
+}
+
+void convert(   const std::vector<double>& from, 
+                Eigen::VectorXd& to)
+{
+    int N = from.size();
+    to.resize(N);
+    for(int i=0; i<N; i++)
+    {
+        to(i) = from[i];
+    }
 }
 
 // OPERATORS
@@ -208,6 +251,23 @@ Eigen::Matrix3d& operator<<=(
 geometry_msgs::Quaternion& operator<<=( 
     geometry_msgs::Quaternion& to,
     const Eigen::Matrix3d& from)
+{
+    convert(from, to);
+    return to;
+}
+
+
+Eigen::Quaterniond& operator<<=( 
+    Eigen::Quaterniond& to,
+    const Eigen::Matrix3d& from)
+{
+    convert(from, to);
+    return to;
+}
+
+Eigen::Matrix3d& operator<<=(
+    Eigen::Matrix3d& to,
+    const Eigen::Quaterniond& from)
 {
     convert(from, to);
     return to;

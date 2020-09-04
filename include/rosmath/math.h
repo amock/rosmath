@@ -10,15 +10,16 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/QuaternionStamped.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseArray.h>
 
-// TODO
+// TODO: stamped only
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/AccelStamped.h>
 #include <geometry_msgs/InertiaStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 
-// TODO covs
+// TODO: covs
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 
@@ -152,6 +153,10 @@ geometry_msgs::Wrench mult(const geometry_msgs::Transform& T,
 geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
                             const geometry_msgs::Twist& twist);
 
+geometry_msgs::PoseWithCovariance mult(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::PoseWithCovariance& p);
+
 // stamped
 geometry_msgs::TransformStamped mult(
     const geometry_msgs::TransformStamped& A,
@@ -168,6 +173,30 @@ geometry_msgs::Vector3Stamped mult(
 geometry_msgs::PoseStamped mult(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PoseStamped& p);
+
+geometry_msgs::PoseArray mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseArray& parr);
+
+geometry_msgs::PolygonStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PolygonStamped& p);
+
+geometry_msgs::AccelStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::AccelStamped& a);
+
+geometry_msgs::InertiaStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::InertiaStamped& inertia);
+
+geometry_msgs::WrenchStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::WrenchStamped& wrench);
+
+geometry_msgs::TwistStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::TwistStamped& twist);
 
 // DIVIDE
 geometry_msgs::Point        div(const geometry_msgs::Point& p, 

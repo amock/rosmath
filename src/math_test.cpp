@@ -51,6 +51,17 @@ bool testGeneralMath()
         ret = false;
     }
 
+    std::vector<double> covdata(36);
+    for(int i=0; i<36; i++)
+    {
+        covdata[i] = i;
+    }
+    Eigen::MatrixXd cov;
+    convert(covdata, cov);
+
+    // ROS_INFO_STREAM(cov.rows() << "x" << cov.cols() << "\n" << cov );
+
+
     return ret;
 }
 

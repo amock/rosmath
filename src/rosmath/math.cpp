@@ -470,6 +470,33 @@ geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
     return ret;
 }
 
+geometry_msgs::PoseWithCovariance mult(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::PoseWithCovariance& p)
+{
+    geometry_msgs::PoseWithCovariance ret;
+    ret.pose = T * p.pose;
+    Eigen::Matrix<double, 6, 6> cov;
+    convert(p.covariance, cov);
+    Eigen::Matrix3d R;
+    R <<= T.rotation;
+    cov.block<3,3>(0,0) = R * cov.block<3,3>(0,0) * R.transpose();
+
+    // how to rotate euler angles covariances?
+    // cov.block<3,3>(3,3) = R * cov.block<3,3>(3,3) * R.transpose();
+
+    // just a guess
+    std::cout << "check if cov transform calulation is correct!" << std::endl;
+    Eigen::Quaterniond qcov(cov.block<3,3>(3,3));
+    Eigen::Quaterniond q;
+    q <<= T.rotation;
+    Eigen::Matrix3d tmp;
+    tmp <<= q * qcov * q.inverse();
+    cov.block<3,3>(3,3) = tmp;
+    convert(cov, ret.covariance);
+    return ret;
+}
+
 // STAMPED
 geometry_msgs::TransformStamped mult(  
     const geometry_msgs::TransformStamped& A, 
@@ -555,6 +582,149 @@ geometry_msgs::PoseStamped mult(
     
     // actual transformation
     ret.pose = T.transform * p.pose;
+
+    return ret;
+}
+
+geometry_msgs::PoseArray mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseArray& parr)
+{
+    geometry_msgs::PoseArray ret;
+    if(T.child_frame_id != parr.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * p{" + parr.header.frame_id 
+            + "}\nrequired: p{B} = T{A->B} * p{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + parr.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = parr.header.stamp;
+    
+    // actual transformation
+    ret.poses.resize(parr.poses.size());
+    for(size_t i=0; i<parr.poses.size(); i++)
+    {
+        ret.poses[i] = T.transform * parr.poses[i];
+    }
+
+    return ret;
+}
+
+geometry_msgs::PolygonStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PolygonStamped& p)
+{
+    geometry_msgs::PolygonStamped ret;
+
+    if(T.child_frame_id != p.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * p{" + p.header.frame_id 
+            + "}\nrequired: p{B} = T{A->B} * p{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + p.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = p.header.stamp;
+    ret.polygon = mult(T.transform, p.polygon);
+
+    return ret;
+}
+
+geometry_msgs::AccelStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::AccelStamped& a)
+{
+    geometry_msgs::AccelStamped ret;
+
+    if(T.child_frame_id != a.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * acc{" + a.header.frame_id 
+            + "}\nrequired: acc{B} = T{A->B} * acc{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + a.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = a.header.stamp;
+    ret.accel = mult(T.transform, a.accel);
+
+    return ret;
+}
+
+geometry_msgs::InertiaStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::InertiaStamped& inertia)
+{
+    geometry_msgs::InertiaStamped ret;
+
+    if(T.child_frame_id != inertia.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * inertia{" + inertia.header.frame_id 
+            + "}\nrequired: inertia{B} = T{A->B} * inertia{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + inertia.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = inertia.header.stamp;
+    ret.inertia = mult(T.transform, inertia.inertia);
+
+    return ret;
+}
+
+geometry_msgs::WrenchStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::WrenchStamped& wrench)
+{
+    geometry_msgs::WrenchStamped ret;
+
+    if(T.child_frame_id != wrench.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * wrench{" + wrench.header.frame_id 
+            + "}\nrequired: wrench{B} = T{A->B} * wrench{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + wrench.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = wrench.header.stamp;
+    ret.wrench = mult(T.transform, wrench.wrench);
+
+    return ret;
+}
+
+geometry_msgs::TwistStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::TwistStamped& twist)
+{
+    geometry_msgs::TwistStamped ret;
+
+    if(T.child_frame_id != twist.header.frame_id)
+    {
+        throw TransformException(
+            "\nCould not do transformation T{" + T.child_frame_id + "->" + T.header.frame_id 
+            + "} * twist{" + twist.header.frame_id 
+            + "}\nrequired: twist{B} = T{A->B} * twist{A}\n"
+            + "mismatched frames: " + T.child_frame_id + " != " + twist.header.frame_id
+            );
+    }
+
+    ret.header.frame_id = T.header.frame_id;
+    ret.header.stamp = twist.header.stamp;
+    ret.twist = mult(T.transform, twist.twist);
 
     return ret;
 }

@@ -44,6 +44,12 @@ void convert(   const geometry_msgs::Quaternion& from,
 void convert(   const Eigen::Matrix3d& from,
                 geometry_msgs::Quaternion& to);
 
+void convert(   const Eigen::Matrix3d& from, 
+                Eigen::Quaterniond& to);
+
+void convert(   const Eigen::Quaterniond& from, 
+                Eigen::Matrix3d& to);
+
 // TRANSFORMATIONS
 void convert(   const geometry_msgs::Transform& from,
                 Eigen::Affine3d& to);
@@ -56,6 +62,33 @@ void convert(   const geometry_msgs::Pose& from,
 
 void convert(   const Eigen::Affine3d& from,
                 geometry_msgs::Pose& to);
+
+// OTHER
+template<int N>
+void convert(   const boost::array<double, N*N>& from, 
+                Eigen::Matrix<double,N,N>& to)
+{
+    for(int i=0; i<N*N; i++)
+    {
+        to(i / N, i % N) = from[i];
+    }
+}
+
+template<int N>
+void convert(   const Eigen::Matrix<double,N,N>& from, 
+                boost::array<double, N*N>& to)
+{
+    for(int i=0; i<N*N; i++)
+    {
+        to[i] = from(i / N, i % N);
+    }
+}
+
+void convert(   const std::vector<double>& from, 
+                Eigen::MatrixXd& to);
+
+void convert(   const std::vector<double>& from, 
+                Eigen::VectorXd& to);
 
 ///////////////////////////////////////////
 //
@@ -96,6 +129,11 @@ Eigen::Matrix3d& operator<<=(    Eigen::Matrix3d& to,
 geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
                                         const Eigen::Matrix3d& from);
 
+Eigen::Quaterniond& operator<<=( Eigen::Quaterniond& to,
+                                 const Eigen::Matrix3d& from);
+
+Eigen::Matrix3d& operator<<=(   Eigen::Matrix3d& to,
+                                const Eigen::Quaterniond& from);
 
 // TRANSFORMATIONS
 Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
