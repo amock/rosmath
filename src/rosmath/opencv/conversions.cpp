@@ -1,5 +1,7 @@
-#include "rosmath/conversions_opencv.h"
+#include "rosmath/opencv/conversions.h"
 #include "rosmath/math.h"
+#include "rosmath/misc.h"
+
 #include <opencv2/calib3d.hpp>
 
 namespace rosmath 

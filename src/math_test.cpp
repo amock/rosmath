@@ -2,7 +2,64 @@
 #include <rosmath/rosmath.h>
 #include <iostream>
 
+#include <rosmath/template.h>
+
 using namespace rosmath;
+
+bool testSensorMsgs()
+{
+    bool ret = true;
+
+    sensor_msgs::PointCloud pcl;
+    geometry_msgs::TransformStamped T;
+    pcl.points.resize(100);
+
+    mult(T, pcl);
+    T * pcl;
+
+    return true;
+}
+
+bool testNavMsgs()
+{
+    bool ret = true;
+
+    geometry_msgs::TransformStamped Ts;
+    nav_msgs::Path path;
+    path.poses.resize(100);
+
+    mult(Ts, path);
+    Ts * path;
+
+
+    return ret;
+}
+
+bool testExtendedMath()
+{
+    bool ret = true;
+    
+    geometry_msgs::Transform T;
+    std::vector<geometry_msgs::Pose> p1(100);
+    std::vector<geometry_msgs::Point> p2(100);
+
+    mult(T, p1);
+    mult(T, p2);
+    T * p1;
+    T * p2;
+
+    geometry_msgs::TransformStamped Ts;
+    std::vector<geometry_msgs::PoseStamped> p1s(100);
+    std::vector<geometry_msgs::PointStamped> p2s(100);
+
+    mult(Ts, p1s);
+    mult(Ts, p2s);
+    Ts * p1s;
+    Ts * p2s;
+
+
+    return ret;
+}
 
 bool testGeneralMath()
 {
@@ -206,8 +263,10 @@ int main(int argc, char** argv)
     std::cout << "Tests of rosmath library: Math" << std::endl;
 
     test("General Math", testGeneralMath);
+    test("Extended Math", testExtendedMath);
     test("Point Transformation", testTransformPoint);
     test("Stamped Transformation", testStamped);
+    test("nav_msgs", testNavMsgs);
 
     return 0;
 }

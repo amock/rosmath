@@ -2,7 +2,7 @@
 
 // internal deps
 #include "rosmath/conversions.h"
-#include "rosmath/conversions_eigen.h"
+#include "rosmath/eigen/conversions.h"
 #include "rosmath/exceptions.h"
 
 #include <Eigen/Dense>
@@ -351,6 +351,30 @@ geometry_msgs::Point mult(
     return p_rot;
 }
 
+geometry_msgs::Point32 mult(
+    const geometry_msgs::Transform& T, 
+    const geometry_msgs::Point32& p)
+{
+    geometry_msgs::Point32 ret;
+    geometry_msgs::Point pdbl;
+    pdbl <<= p;
+    pdbl = mult(T, pdbl);
+    ret <<= pdbl;
+    return ret;
+}
+
+geometry_msgs::Point32 mult(
+    const geometry_msgs::Quaternion& q, 
+    const geometry_msgs::Point32& p)
+{
+    geometry_msgs::Point32 ret;
+    geometry_msgs::Point pdbl;
+    pdbl <<= p;
+    pdbl = mult(q, pdbl);
+    ret <<= pdbl;
+    return ret;
+}
+
 geometry_msgs::Vector3 mult(
     const geometry_msgs::Transform& T, 
     const geometry_msgs::Vector3& p)
@@ -518,7 +542,6 @@ geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
 //     tmp <<= q * qcov * q.inverse();
 //     cov.block<3,3>(3,3) = tmp;
 //     convert(cov, ret.covariance);
-
 
 //     // or do not transform the the covariance at all?
 //     // covariance is sx, sy, sz, sroll, spitch, syaw
@@ -1328,6 +1351,20 @@ geometry_msgs::Point operator*(
 geometry_msgs::Point operator*(
     const geometry_msgs::Transform& T,
     const geometry_msgs::Point& p)
+{
+    return mult(T, p);
+}
+
+geometry_msgs::Point32 operator*(
+    const geometry_msgs::Quaternion& q,
+    const geometry_msgs::Point32& p)
+{
+    return mult(q, p);
+}
+
+geometry_msgs::Point32 operator*(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::Point32& p)
 {
     return mult(T, p);
 }

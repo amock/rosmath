@@ -51,10 +51,14 @@ include_directories(
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/conversions.cpp
-  src/${PROJECT_NAME}/conversions_eigen.cpp
+  src/${PROJECT_NAME}/eigen/conversions.cpp
   src/${PROJECT_NAME}/math.cpp
   src/${PROJECT_NAME}/misc.cpp
-  src/${PROJECT_NAME}/conversions_opencv.cpp
+  # make this optional
+  src/${PROJECT_NAME}/opencv/conversions.cpp
+  src/${PROJECT_NAME}/nav_msgs/math.cpp
+  src/${PROJECT_NAME}/sensor_msgs/math.cpp
+  src/${PROJECT_NAME}/sensor_msgs/misc.cpp
 )
 
 ## Add cmake target dependencies of the library

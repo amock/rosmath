@@ -1,9 +1,10 @@
-#ifndef ROSMATH_CONVERSIONS_OPENCV_H
-#define ROSMATH_CONVERSIONS_OPENCV_H
+#ifndef ROSMATH_OPENCV_CONVERSIONS_H
+#define ROSMATH_OPENCV_CONVERSIONS_H
 
-#include "conversions.h"
-#include "math.h"
-#include "misc.h"
+#include "rosmath/math.h"
+#include "rosmath/conversions.h"
+#include "rosmath/eigen/conversions.h"
+
 #include <opencv2/core.hpp>
 
 namespace rosmath 
@@ -72,4 +73,4 @@ void convert(const cv::Mat& rvec, const cv::Mat& tvec,
 
 } // namespace rosmath
 
-#endif // ROSMATH_CONVERSIONS_OPENCV_H
+#endif // ROSMATH_OPENCV_CONVERSIONS_H

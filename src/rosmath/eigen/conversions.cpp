@@ -1,4 +1,4 @@
-#include "rosmath/conversions_eigen.h"
+#include "rosmath/eigen/conversions.h"
 #include "rosmath/conversions.h"
 
 namespace rosmath {

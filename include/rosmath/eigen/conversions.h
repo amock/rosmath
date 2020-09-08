@@ -1,8 +1,8 @@
-#ifndef ROSMATH_CONVERSIONS_EIGEN_H
-#define ROSMATH_CONVERSIONS_EIGEN_H
+#ifndef ROSMATH_EIGEN_CONVERSIONS_H
+#define ROSMATH_EIGEN_CONVERSIONS_H
 
+#include "rosmath/conversions.h"
 #include <Eigen/Dense>
-#include "conversions.h"
 
 namespace rosmath {
 
@@ -151,4 +151,4 @@ geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to,
 
 } // namespace rosmath
 
-#endif // ROSMATH_CONVERSIONS_EIGEN_H
+#endif // ROSMATH_EIGEN_CONVERSIONS_H

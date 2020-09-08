@@ -6,13 +6,14 @@
 #include <limits>
 
 // global ros deps
+// geometry_msgs
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/Vector3Stamped.h>
+#include <geometry_msgs/Point32.h>
 #include <geometry_msgs/QuaternionStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
-
-// TODO: stamped only
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/AccelStamped.h>
 #include <geometry_msgs/InertiaStamped.h>
@@ -23,13 +24,45 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 
+// TODO: nav_msgs
+#include <nav_msgs/Path.h>
+
 // internal deps
 #include "conversions.h"
-
-// only include this when eigen was found
-#include "conversions_eigen.h"
+#include "template.h"
 
 namespace rosmath {
+
+using RotatableTypes = std::tuple<
+    geometry_msgs::Point, 
+    geometry_msgs::Vector3,
+    geometry_msgs::Point32,
+    geometry_msgs::Quaternion>;
+
+using TransformableTypes = std::tuple<
+    geometry_msgs::Transform, 
+    geometry_msgs::Point, 
+    geometry_msgs::Vector3,
+    geometry_msgs::Point32,
+    geometry_msgs::Quaternion,
+    geometry_msgs::Pose,
+    geometry_msgs::Polygon,
+    geometry_msgs::Accel,
+    geometry_msgs::Inertia,
+    geometry_msgs::Wrench,
+    geometry_msgs::Twist>;
+
+using TransformableTypesStamped = std::tuple<
+    geometry_msgs::TransformStamped, 
+    geometry_msgs::PointStamped, 
+    geometry_msgs::Vector3Stamped,
+    geometry_msgs::QuaternionStamped,
+    geometry_msgs::PoseStamped,
+    geometry_msgs::PolygonStamped,
+    geometry_msgs::AccelStamped,
+    geometry_msgs::InertiaStamped,
+    geometry_msgs::WrenchStamped,
+    geometry_msgs::TwistStamped>;
 
 constexpr double EPS_DBL = std::numeric_limits<double>::epsilon() * 10.0;
 constexpr float EPS_FLT = std::numeric_limits<float>::epsilon() * 10.0;
@@ -131,6 +164,12 @@ geometry_msgs::Point mult(  const geometry_msgs::Transform& T,
 geometry_msgs::Point mult(  const geometry_msgs::Quaternion& q,
                             const geometry_msgs::Point& p);
 
+geometry_msgs::Point32 mult(    const geometry_msgs::Transform& T, 
+                                const geometry_msgs::Point32& p);
+
+geometry_msgs::Point32 mult(    const geometry_msgs::Quaternion& q, 
+                                const geometry_msgs::Point32& p);
+
 geometry_msgs::Vector3 mult(    const geometry_msgs::Transform& T, 
                                 const geometry_msgs::Vector3& p);
 
@@ -206,6 +245,19 @@ geometry_msgs::WrenchStamped mult(
 geometry_msgs::TwistStamped mult(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::TwistStamped& twist);
+
+// shortcut: vector of transformables
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
+std::vector<GeomT> mult(const geometry_msgs::Transform& T,
+    const std::vector<GeomT>& data);
+
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypesStamped>::type* = nullptr>
+std::vector<GeomT> mult(const geometry_msgs::TransformStamped& T,
+    const std::vector<GeomT>& data);
+
+template<typename GeomT, typename TupleEnabler<GeomT, RotatableTypes>::type* = nullptr>
+std::vector<GeomT> mult(const geometry_msgs::Quaternion& q,
+    const std::vector<GeomT>& data);
 
 // DIVIDE
 geometry_msgs::Point        div(const geometry_msgs::Point& p, 
@@ -440,6 +492,14 @@ geometry_msgs::Point operator*(
     const geometry_msgs::Transform& T,
     const geometry_msgs::Point& p);
 
+geometry_msgs::Point32 operator*(
+    const geometry_msgs::Quaternion& q,
+    const geometry_msgs::Point32& p);
+
+geometry_msgs::Point32 operator*(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::Point32& p);
+
 geometry_msgs::Vector3 operator*(
     const geometry_msgs::Quaternion& q,
     const geometry_msgs::Vector3& p);
@@ -472,6 +532,19 @@ geometry_msgs::PointStamped operator*(
 geometry_msgs::PoseStamped operator*(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::PoseStamped& p);
+
+// VECTOR
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
+std::vector<GeomT> operator*(const geometry_msgs::Transform& T,
+    const std::vector<GeomT>& data);
+
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypesStamped>::type* = nullptr>
+std::vector<GeomT> operator*(const geometry_msgs::TransformStamped& T,
+    const std::vector<GeomT>& data);
+
+template<typename GeomT, typename TupleEnabler<GeomT, RotatableTypes>::type* = nullptr>
+std::vector<GeomT> operator*(const geometry_msgs::Quaternion& q,
+    const std::vector<GeomT>& data);
 
 geometry_msgs::Point operator*=(  
     geometry_msgs::Point& p,
@@ -532,5 +605,7 @@ geometry_msgs::TransformStamped operator~(
     const geometry_msgs::TransformStamped& T);
 
 }
+
+#include "math.tcc"
 
 #endif // ROSMATH_MATH_H
