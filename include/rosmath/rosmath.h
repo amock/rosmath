@@ -10,5 +10,7 @@
 #include "opencv/conversions.h"
 #include "nav_msgs/math.h"
 #include "sensor_msgs/math.h"
+#include "sensor_msgs/misc.h"
+#include "sensor_msgs/conversions.h"
 
 #endif // ROSMATH_ROSTMATH_H

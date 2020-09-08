@@ -30,9 +30,7 @@ sensor_msgs::PointCloud mult(
 
     if(hasNormals(pcl))
     {
-        std::vector<geometry_msgs::Vector3> normals = getNormals(pcl);
-        normals = T.transform.rotation * normals;
-        setNormals(normals, ret);
+        setNormals(T.transform.rotation * getNormals(pcl), ret);
     }
 
     return ret;

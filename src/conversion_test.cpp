@@ -4,6 +4,30 @@
 
 using namespace rosmath;
 
+bool testSensorMsgs()
+{
+    bool ret = true;
+
+    sensor_msgs::LaserScan scan;
+    scan.ranges.resize(100);
+    for(int i=0; i<100; i++)
+    {
+        scan.ranges[i] = i;
+    }
+    scan.range_min = 0.0;
+    scan.range_max = 50.0;
+    
+    sensor_msgs::PointCloud pcl;
+    pcl <<= scan;
+
+    if(pcl.points.size() != 50)
+    {
+        ret = false;
+    }
+
+    return ret;
+}
+
 bool testInternal()
 {
     bool ret = true;
@@ -162,6 +186,7 @@ int main(int argc, char** argv)
     test("Internal", testInternal);
     test("Point Eigen", testPointEigen);
     test("Transform", testTransform);
+    test("sensor_msgs", testSensorMsgs);
     
     
 

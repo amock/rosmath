@@ -11,6 +11,7 @@ namespace rosmath {
 constexpr char POINTCLOUD_NORMAL_X[] = "nx";
 constexpr char POINTCLOUD_NORMAL_Y[] = "ny";
 constexpr char POINTCLOUD_NORMAL_Z[] = "nz";
+constexpr char POINTCLOUD_INTENSITY[] = "intensity";
 
 bool hasChannel(const sensor_msgs::PointCloud& pcl,
                 const std::string& name);

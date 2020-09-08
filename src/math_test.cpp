@@ -13,6 +13,8 @@ bool testSensorMsgs()
     sensor_msgs::PointCloud pcl;
     geometry_msgs::TransformStamped T;
     pcl.points.resize(100);
+    std::vector<geometry_msgs::Vector3> normals(100);
+    setNormals(normals, pcl);
 
     mult(T, pcl);
     T * pcl;

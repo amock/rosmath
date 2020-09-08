@@ -59,6 +59,7 @@ add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/nav_msgs/math.cpp
   src/${PROJECT_NAME}/sensor_msgs/math.cpp
   src/${PROJECT_NAME}/sensor_msgs/misc.cpp
+  src/${PROJECT_NAME}/sensor_msgs/conversions.cpp
 )
 
 ## Add cmake target dependencies of the library
