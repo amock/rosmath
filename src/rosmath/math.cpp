@@ -494,32 +494,37 @@ geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
     return ret;
 }
 
-geometry_msgs::PoseWithCovariance mult(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::PoseWithCovariance& p)
-{
-    geometry_msgs::PoseWithCovariance ret;
-    ret.pose = T * p.pose;
-    Eigen::Matrix<double, 6, 6> cov;
-    convert(p.covariance, cov);
-    Eigen::Matrix3d R;
-    R <<= T.rotation;
-    cov.block<3,3>(0,0) = R * cov.block<3,3>(0,0) * R.transpose();
+// geometry_msgs::PoseWithCovariance mult(
+//     const geometry_msgs::Transform& T,
+//     const geometry_msgs::PoseWithCovariance& p)
+// {
+//     geometry_msgs::PoseWithCovariance ret;
+//     ret.pose = T * p.pose;
+//     Eigen::Matrix<double, 6, 6> cov;
+//     convert(p.covariance, cov);
+//     Eigen::Matrix3d R;
+//     R <<= T.rotation;
+//     cov.block<3,3>(0,0) = R * cov.block<3,3>(0,0) * R.transpose();
 
-    // how to rotate euler angles covariances?
-    // cov.block<3,3>(3,3) = R * cov.block<3,3>(3,3) * R.transpose();
+//     // how to rotate euler angles covariances?
+//     // cov.block<3,3>(3,3) = R * cov.block<3,3>(3,3) * R.transpose();
 
-    // just a guess
-    std::cout << "check if cov transform calulation is correct!" << std::endl;
-    Eigen::Quaterniond qcov(cov.block<3,3>(3,3));
-    Eigen::Quaterniond q;
-    q <<= T.rotation;
-    Eigen::Matrix3d tmp;
-    tmp <<= q * qcov * q.inverse();
-    cov.block<3,3>(3,3) = tmp;
-    convert(cov, ret.covariance);
-    return ret;
-}
+//     // just a guess
+//     std::cout << "check if cov transform calulation is correct!" << std::endl;
+//     Eigen::Quaterniond qcov(cov.block<3,3>(3,3));
+//     Eigen::Quaterniond q;
+//     q <<= T.rotation;
+//     Eigen::Matrix3d tmp;
+//     tmp <<= q * qcov * q.inverse();
+//     cov.block<3,3>(3,3) = tmp;
+//     convert(cov, ret.covariance);
+
+
+//     // or do not transform the the covariance at all?
+//     // covariance is sx, sy, sz, sroll, spitch, syaw
+
+//     return ret;
+// }
 
 // STAMPED
 geometry_msgs::TransformStamped mult(  

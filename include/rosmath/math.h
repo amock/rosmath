@@ -161,9 +161,10 @@ geometry_msgs::Wrench mult(const geometry_msgs::Transform& T,
 geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
                             const geometry_msgs::Twist& twist);
 
-geometry_msgs::PoseWithCovariance mult(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::PoseWithCovariance& p);
+// TODO
+// geometry_msgs::PoseWithCovariance mult(
+//     const geometry_msgs::Transform& T,
+//     const geometry_msgs::PoseWithCovariance& p);
 
 // stamped
 geometry_msgs::TransformStamped mult(
