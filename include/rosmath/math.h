@@ -78,6 +78,10 @@ geometry_msgs::Vector3  add(const geometry_msgs::Vector3& p,
 geometry_msgs::Point32  add(const geometry_msgs::Point32& p, 
                             const float& scalar);
 
+geometry_msgs::Quaternion add(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b);
+
 // SUBSTRACT
 geometry_msgs::Point    sub(const geometry_msgs::Point& a, 
                             const geometry_msgs::Point& b);
@@ -91,6 +95,10 @@ geometry_msgs::Vector3  sub(const geometry_msgs::Vector3& p,
                             const double& scalar);
 geometry_msgs::Point32  sub(const geometry_msgs::Point32& p, 
                             const float& scalar);
+
+geometry_msgs::Quaternion sub(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b);
 
 // MULTIPLY
 geometry_msgs::Point mult(  const geometry_msgs::Point& p,
@@ -224,7 +232,9 @@ geometry_msgs::Point32  cross(  const geometry_msgs::Point32& a,
 
 geometry_msgs::Quaternion inv(const geometry_msgs::Quaternion& q);
 geometry_msgs::Transform  inv(const geometry_msgs::Transform& T);
+geometry_msgs::Pose       inv(const geometry_msgs::Pose& p);
 geometry_msgs::TransformStamped  inv(const geometry_msgs::TransformStamped& T);
+
 
 double norm(const geometry_msgs::Point& p);
 double norm(const geometry_msgs::Vector3& p);
@@ -301,6 +311,10 @@ geometry_msgs::Point32 operator+(
     const geometry_msgs::Point32& p,
     const float& scalar);
 
+geometry_msgs::Quaternion operator+(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b);
+
 // PLUS=
 geometry_msgs::Point operator+=(
     geometry_msgs::Point& a,
@@ -350,6 +364,10 @@ geometry_msgs::Vector3 operator-(
 geometry_msgs::Point32 operator-(
     const geometry_msgs::Point32& p,
     const float& scalar);
+
+geometry_msgs::Quaternion operator-(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b);
 
 // MINUS=
 geometry_msgs::Point operator-=(
@@ -505,6 +523,9 @@ geometry_msgs::Quaternion operator~(
     
 geometry_msgs::Transform operator~(
     const geometry_msgs::Transform& T);
+
+geometry_msgs::Pose operator~(
+    const geometry_msgs::Pose& p);
 
 geometry_msgs::TransformStamped operator~(
     const geometry_msgs::TransformStamped& T);

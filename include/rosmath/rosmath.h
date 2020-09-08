@@ -6,5 +6,6 @@
 #include "conversions.h"
 #include "conversions_eigen.h"
 #include "exceptions.h"
+#include "conversions_opencv.h"
 
 #endif // ROSMATH_ROSTMATH_H

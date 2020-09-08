@@ -169,6 +169,18 @@ geometry_msgs::Point32  add(const geometry_msgs::Point32& p,
     return ret;
 }
 
+geometry_msgs::Quaternion add(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b)
+{
+    geometry_msgs::Quaternion ret;
+    ret.x = a.x + b.x;
+    ret.y = a.y + b.y;
+    ret.z = a.z + b.z;
+    ret.w = a.w + b.w;
+    return ret;
+}
+
 geometry_msgs::Point    sub(const geometry_msgs::Point& a, 
                             const geometry_msgs::Point& b)
 {
@@ -226,6 +238,18 @@ geometry_msgs::Point32  sub(const geometry_msgs::Point32& p,
     ret.x = p.x - scalar;
     ret.y = p.y - scalar;
     ret.z = p.z - scalar;
+    return ret;
+}
+
+geometry_msgs::Quaternion sub(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b)
+{
+    geometry_msgs::Quaternion ret;
+    ret.x = a.x - b.x;
+    ret.y = a.y - b.y;
+    ret.z = a.z - b.z;
+    ret.w = a.w - b.w;
     return ret;
 }
 
@@ -859,6 +883,16 @@ geometry_msgs::Transform inv(
     return Tinv;
 }
 
+geometry_msgs::Pose inv(const geometry_msgs::Pose& p)
+{
+    geometry_msgs::Pose ret;
+    geometry_msgs::Transform T;
+    T <<= p;
+    T = ~T;
+    ret <<= T;
+    return ret;
+}
+
 geometry_msgs::TransformStamped  inv(
     const geometry_msgs::TransformStamped& T)
 {
@@ -1036,6 +1070,13 @@ geometry_msgs::Point32 operator+(
     return add(p, scalar);
 }
 
+geometry_msgs::Quaternion operator+(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b)
+{
+    return add(a, b);
+}
+
 // PLUS=
 geometry_msgs::Point operator+=(
     geometry_msgs::Point& a,
@@ -1138,6 +1179,13 @@ geometry_msgs::Point32 operator-(
     const float& scalar)
 {
     return sub(p, scalar);
+}
+
+geometry_msgs::Quaternion operator-(
+    const geometry_msgs::Quaternion& a,
+    const geometry_msgs::Quaternion& b)
+{
+    return sub(a, b);
 }
 
 // MINUS=
@@ -1449,6 +1497,12 @@ geometry_msgs::Transform operator~(
     const geometry_msgs::Transform& T)
 {
     return inv(T);
+}
+
+geometry_msgs::Pose operator~(
+    const geometry_msgs::Pose& p)
+{
+    return inv(p);
 }
 
 geometry_msgs::TransformStamped operator~(
