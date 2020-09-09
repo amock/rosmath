@@ -60,6 +60,12 @@ bool testExtendedMath()
     Ts * p2s;
 
 
+    geometry_msgs::PoseWithCovarianceStamped p3;
+    p3.pose.pose = p1[0];
+    
+    mult(Ts, p3);
+
+
     return ret;
 }
 

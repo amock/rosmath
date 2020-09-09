@@ -22,7 +22,7 @@
 
 // TODO: covs
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-
+#include <geometry_msgs/TwistWithCovarianceStamped.h>
 
 // TODO: nav_msgs
 #include <nav_msgs/Path.h>
@@ -37,7 +37,7 @@ using RotatableTypes = std::tuple<
     geometry_msgs::Point, 
     geometry_msgs::Vector3,
     geometry_msgs::Point32,
-    geometry_msgs::Quaternion>;
+    geometry_msgs::Pose>;
 
 using TransformableTypes = std::tuple<
     geometry_msgs::Transform, 
@@ -46,6 +46,9 @@ using TransformableTypes = std::tuple<
     geometry_msgs::Point32,
     geometry_msgs::Quaternion,
     geometry_msgs::Pose,
+    boost::array<double, 36>, // cov
+    geometry_msgs::PoseWithCovariance,
+    geometry_msgs::TwistWithCovariance,
     geometry_msgs::Polygon,
     geometry_msgs::Accel,
     geometry_msgs::Inertia,
@@ -62,7 +65,9 @@ using TransformableTypesStamped = std::tuple<
     geometry_msgs::AccelStamped,
     geometry_msgs::InertiaStamped,
     geometry_msgs::WrenchStamped,
-    geometry_msgs::TwistStamped>;
+    geometry_msgs::TwistStamped,
+    geometry_msgs::PoseWithCovarianceStamped,
+    geometry_msgs::TwistWithCovarianceStamped>;
 
 constexpr double EPS_DBL = std::numeric_limits<double>::epsilon() * 10.0;
 constexpr float EPS_FLT = std::numeric_limits<float>::epsilon() * 10.0;
@@ -200,10 +205,17 @@ geometry_msgs::Wrench mult(const geometry_msgs::Transform& T,
 geometry_msgs::Twist mult(const geometry_msgs::Transform& T,
                             const geometry_msgs::Twist& twist);
 
-// TODO
-// geometry_msgs::PoseWithCovariance mult(
-//     const geometry_msgs::Transform& T,
-//     const geometry_msgs::PoseWithCovariance& p);
+// TODO: check covariance functions
+boost::array<double, 36> multCov(const geometry_msgs::Transform& T, 
+    const boost::array<double, 36>& covariance);
+
+geometry_msgs::PoseWithCovariance mult(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::PoseWithCovariance& p);
+
+geometry_msgs::TwistWithCovariance mult(
+    const geometry_msgs::Transform& T,
+    const geometry_msgs::TwistWithCovariance& twist);
 
 // stamped
 geometry_msgs::TransformStamped mult(
@@ -245,6 +257,14 @@ geometry_msgs::WrenchStamped mult(
 geometry_msgs::TwistStamped mult(
     const geometry_msgs::TransformStamped& T,
     const geometry_msgs::TwistStamped& twist);
+
+geometry_msgs::PoseWithCovarianceStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::PoseWithCovarianceStamped& p);
+
+geometry_msgs::TwistWithCovarianceStamped mult(
+    const geometry_msgs::TransformStamped& T,
+    const geometry_msgs::TwistWithCovarianceStamped& twist);
 
 // shortcut: vector of transformables
 template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
