@@ -64,6 +64,8 @@ bool testExtendedMath()
     p3.pose.pose = p1[0];
     
     mult(Ts, p3);
+    Ts * p3;
+    
 
 
     return ret;

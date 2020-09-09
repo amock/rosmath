@@ -37,7 +37,8 @@ using RotatableTypes = std::tuple<
     geometry_msgs::Point, 
     geometry_msgs::Vector3,
     geometry_msgs::Point32,
-    geometry_msgs::Pose>;
+    geometry_msgs::Pose,
+    geometry_msgs::Quaternion>;
 
 using TransformableTypes = std::tuple<
     geometry_msgs::Transform, 
@@ -504,54 +505,18 @@ double operator*(
     const geometry_msgs::Point& a,
     const geometry_msgs::Point& b);
 
-geometry_msgs::Point operator*(
-    const geometry_msgs::Quaternion& q,
-    const geometry_msgs::Point& p);
+template<typename GeomT, typename TupleEnabler<GeomT, RotatableTypes>::type* = nullptr>
+GeomT operator*(const geometry_msgs::Quaternion& T,
+                const GeomT& data);
 
-geometry_msgs::Point operator*(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::Point& p);
-
-geometry_msgs::Point32 operator*(
-    const geometry_msgs::Quaternion& q,
-    const geometry_msgs::Point32& p);
-
-geometry_msgs::Point32 operator*(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::Point32& p);
-
-geometry_msgs::Vector3 operator*(
-    const geometry_msgs::Quaternion& q,
-    const geometry_msgs::Vector3& p);
-
-geometry_msgs::Vector3 operator*(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::Vector3& p);
-
-geometry_msgs::Transform operator*(
-    const geometry_msgs::Transform& A,
-    const geometry_msgs::Transform& B);
-
-geometry_msgs::Quaternion operator*(
-    const geometry_msgs::Quaternion& a,
-    const geometry_msgs::Quaternion& b);
-
-geometry_msgs::Pose operator*(
-    const geometry_msgs::Transform& T,
-    const geometry_msgs::Pose& p);
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
+GeomT operator*(const geometry_msgs::Transform& T,
+                const GeomT& data);
 
 // STAMPED
-geometry_msgs::TransformStamped operator*(
-    const geometry_msgs::TransformStamped& A,
-    const geometry_msgs::TransformStamped& B);
-
-geometry_msgs::PointStamped operator*(
-    const geometry_msgs::TransformStamped& T,
-    const geometry_msgs::PointStamped& p);
-
-geometry_msgs::PoseStamped operator*(
-    const geometry_msgs::TransformStamped& T,
-    const geometry_msgs::PoseStamped& p);
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypesStamped>::type* = nullptr>
+GeomT operator*(const geometry_msgs::TransformStamped& T,
+                const GeomT& data);
 
 // VECTOR
 template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>

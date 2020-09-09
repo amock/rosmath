@@ -36,6 +36,27 @@ std::vector<GeomT> mult(const geometry_msgs::Quaternion& q,
     return ret;
 }
 
+template<typename GeomT, typename TupleEnabler<GeomT, RotatableTypes>::type* = nullptr>
+GeomT operator*(const geometry_msgs::Quaternion& T,
+                const GeomT& data)
+{
+    return mult(T, data);
+}
+
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
+GeomT operator*(const geometry_msgs::Transform& T,
+                const GeomT& data)
+{
+    return mult(T, data);
+}
+
+template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypesStamped>::type* = nullptr>
+GeomT operator*(const geometry_msgs::TransformStamped& T,
+                const GeomT& data)
+{
+    return mult(T, data);
+}
+
 template<typename GeomT, typename TupleEnabler<GeomT, TransformableTypes>::type* = nullptr>
 std::vector<GeomT> operator*(const geometry_msgs::Transform& T,
     const std::vector<GeomT>& data)
