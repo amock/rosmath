@@ -57,7 +57,10 @@ void convert(   const Eigen::Vector3d& from,
 void convert(   const geometry_msgs::Quaternion& from, 
                 Eigen::Quaterniond& to)
 {
-    to = Eigen::Quaterniond(from.w, from.x, from.y, from.z);
+    to.x() = from.x;
+    to.y() = from.y;
+    to.z() = from.z;
+    to.w() = from.w;
 }
 
 void convert(   const Eigen::Quaterniond& from,
@@ -97,7 +100,6 @@ void convert(   const Eigen::Quaterniond& from,
 }
 
 // TRANSFORMATIONS
-
 void convert(   const geometry_msgs::Transform& from,
                 Eigen::Affine3d& to)
 {
@@ -106,7 +108,7 @@ void convert(   const geometry_msgs::Transform& from,
     Eigen::Quaterniond rotation;
     convert(from.rotation, rotation);
     to.setIdentity();
-    to.linear() = rotation.matrix();
+    to.linear() = rotation.toRotationMatrix();
     to.translation() = translation;
 }
 

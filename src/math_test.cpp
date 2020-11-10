@@ -164,6 +164,80 @@ bool testTransformPoint()
     return ret;
 }
 
+bool testTransform()
+{
+    std::cout << EIGEN_WORLD_VERSION << "." << EIGEN_MAJOR_VERSION << "." << EIGEN_MINOR_VERSION << std::endl;
+
+    geometry_msgs::TransformStamped T_map_base, T_base_scanner;
+    geometry_msgs::TransformStamped T_map_scanner;
+
+    T_map_base.header.frame_id = "map";
+    T_map_base.child_frame_id = "base_footprint";
+    //     transform: 
+    //   translation: 
+    //     x: -3.94529
+    //     y: -4.36069
+    //     z: 0
+    //   rotation: 
+    //     x: 0
+    //     y: 0
+    //     z: -0.490763
+    //     w: 0.871293
+    T_map_base.transform.translation.x = -3.94529;
+    T_map_base.transform.translation.y = -4.36069;
+    T_map_base.transform.translation.z = 0.0;
+    T_map_base.transform.rotation.x = 0.0;
+    T_map_base.transform.rotation.y = 0.0;
+    T_map_base.transform.rotation.z = -0.490763;
+    T_map_base.transform.rotation.w = 0.871293;
+
+    
+    T_base_scanner.header.frame_id = "base_footprint";
+    T_base_scanner.child_frame_id = "velodyne";
+    // transform: 
+    //   translation: 
+    //     x: 0
+    //     y: 0
+    //     z: 0.6027
+    //   rotation: 
+    //     x: 0
+    //     y: 0
+    //     z: 0
+    //     w: 1
+
+    T_base_scanner.transform.translation.x = 0.0;
+    T_base_scanner.transform.translation.y = 0.0;
+    T_base_scanner.transform.translation.z = 0.6027;
+    T_base_scanner.transform.rotation.x = 0.0;
+    T_base_scanner.transform.rotation.y = 0.0;
+    T_base_scanner.transform.rotation.z = 0.0;
+    T_base_scanner.transform.rotation.w = 1.0;
+
+
+    // RES
+
+    //     transform: 
+    //   translation: 
+    //     x: -3.94529
+    //     y: -4.36069
+    //     z: 0.6027
+    //   rotation: 
+    //     x: 0
+    //     y: 0
+    //     z: 0
+    //     w: 0
+
+    // ROS_INFO_STREAM("T_map_base: " << T_map_base);
+    // ROS_INFO_STREAM("T_base_scanner: " << T_base_scanner);
+
+    T_map_scanner = T_map_base * T_base_scanner;
+    // ROS_INFO_STREAM("T_map_scanner: " << T_map_scanner);
+    
+
+
+    return true;
+}
+
 bool testStamped()
 {
     bool ret = true;
@@ -274,6 +348,7 @@ int main(int argc, char** argv)
 
     test("General Math", testGeneralMath);
     test("Extended Math", testExtendedMath);
+    test("Transformation", testTransform);
     test("Point Transformation", testTransformPoint);
     test("Stamped Transformation", testStamped);
     test("nav_msgs", testNavMsgs);

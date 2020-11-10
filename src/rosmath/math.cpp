@@ -5,7 +5,7 @@
 #include "rosmath/eigen/conversions.h"
 #include "rosmath/exceptions.h"
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 
 namespace rosmath {
@@ -415,9 +415,11 @@ geometry_msgs::Transform mult(  const geometry_msgs::Transform& A,
     Eigen::Affine3d Beig;
     Aeig <<= A;
     Beig <<= B;
+
     Eigen::Affine3d Ceig = Aeig * Beig;
     geometry_msgs::Transform C;
     C <<= Ceig;
+
     return C;
 }
 
@@ -565,7 +567,6 @@ geometry_msgs::TransformStamped mult(
     geometry_msgs::TransformStamped ret;
 
     // from child_frame_id to header.frame_id
-
     if(A.child_frame_id != B.header.frame_id)
     {
         throw TransformException(
