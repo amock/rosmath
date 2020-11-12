@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/eigen/conversions.cpp
   src/${PROJECT_NAME}/math.cpp
   src/${PROJECT_NAME}/misc.cpp
+  src/${PROJECT_NAME}/random.cpp
   # make this optional
   src/${PROJECT_NAME}/opencv/conversions.cpp
   src/${PROJECT_NAME}/nav_msgs/math.cpp
