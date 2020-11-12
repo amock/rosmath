@@ -1,12 +1,11 @@
-#include "rosmath/math.h"
+#include "Eigen/Dense"
+
 
 // internal deps
+#include "rosmath/math.h"
 #include "rosmath/conversions.h"
 #include "rosmath/eigen/conversions.h"
 #include "rosmath/exceptions.h"
-
-#include "Eigen/Dense"
-
 
 namespace rosmath {
 

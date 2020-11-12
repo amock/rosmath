@@ -1,3 +1,5 @@
+#include "Eigen/Dense"
+
 #include "rosmath/eigen/conversions.h"
 #include "rosmath/conversions.h"
 

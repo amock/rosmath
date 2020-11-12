@@ -1,5 +1,5 @@
 #include "rosmath/misc.h"
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 namespace rosmath {
 
