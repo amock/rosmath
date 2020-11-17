@@ -63,6 +63,12 @@ void convert(   const geometry_msgs::Pose& from,
 void convert(   const Eigen::Affine3d& from,
                 geometry_msgs::Pose& to);
 
+void convert(   const geometry_msgs::Transform& from,
+                Eigen::Matrix4d& to);
+
+void convert(   const Eigen::Matrix4d& from,
+                geometry_msgs::Transform& to);
+
 // OTHER
 template<int N>
 void convert(   const boost::array<double, N*N>& from, 
@@ -147,6 +153,12 @@ Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to,
 
 geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
                                     const Eigen::Affine3d& from);
+
+Eigen::Matrix4d& operator<<=(   Eigen::Matrix4d& to, 
+                                const geometry_msgs::Transform& from);
+
+geometry_msgs::Transform& operator<<=(  geometry_msgs::Transform& to, 
+                                        const Eigen::Matrix4d& from);
 
 
 } // namespace rosmath

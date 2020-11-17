@@ -138,6 +138,27 @@ void convert(   const Eigen::Affine3d& from,
     convert(from.translation(), to.position);
 }
 
+void convert(   const geometry_msgs::Transform& from,
+                Eigen::Matrix4d& to)
+{
+    Eigen::Quaterniond qeig;
+    qeig <<= from.rotation;
+    to.setIdentity();
+    to.block<3,3>(0,0) = qeig.toRotationMatrix();
+    Eigen::Vector3d teig;
+    teig <<= from.translation;
+    to.block<1,3>(3,0) = teig;
+}
+
+void convert(   const Eigen::Matrix4d& from,
+                geometry_msgs::Transform& to)
+{
+    Eigen::Matrix3d Reig = from.block<3,3>(0,0);
+    Eigen::Vector3d teig = from.block<1,3>(3,0);
+    to.rotation <<= Reig;
+    to.translation <<= teig;
+}
+
 // OTHER
 // void convert(   const boost::array<double, 36>& covdata);
 
@@ -300,6 +321,20 @@ Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to,
 
 geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
                                     const Eigen::Affine3d& from)
+{
+    convert(from, to);
+    return to;
+}
+
+Eigen::Matrix4d& operator<<=(   Eigen::Matrix4d& to, 
+                                const geometry_msgs::Transform& from)
+{
+    convert(from, to);
+    return to;
+}
+
+geometry_msgs::Transform& operator<<=(  geometry_msgs::Transform& to, 
+                                        const Eigen::Matrix4d& from)
 {
     convert(from, to);
     return to;
