@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(rosmath)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -54,6 +54,7 @@ add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/math.cpp
   src/${PROJECT_NAME}/misc.cpp
   src/${PROJECT_NAME}/random.cpp
+  src/${PROJECT_NAME}/stats.cpp
   # make this optional
   src/${PROJECT_NAME}/opencv/conversions.cpp
   src/${PROJECT_NAME}/nav_msgs/math.cpp
@@ -164,6 +165,21 @@ target_link_libraries(${PROJECT_NAME}_example_namespace
   ${catkin_LIBRARIES}
   rosmath
 )
+
+add_executable(${PROJECT_NAME}_example_random
+    examples/random.cpp
+)
+
+add_dependencies(${PROJECT_NAME}_example_random
+    ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+    ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_example_random
+  ${catkin_LIBRARIES}
+  rosmath
+)
+
 
 #############
 ## Install ##
