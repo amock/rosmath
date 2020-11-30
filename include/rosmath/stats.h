@@ -87,8 +87,8 @@ Eigen::Matrix3d covariance(
 Eigen::Matrix3d covariance(
     const std::vector<geometry_msgs::Point>& points);
 
-
-void pca(const std::vector<geometry_msgs::Point>& points);
+void pca(
+    const std::vector<geometry_msgs::Point>& points);
 
 template<typename ...Tp>
 Stats<Tp...> stats(
