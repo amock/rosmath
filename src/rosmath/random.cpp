@@ -7,6 +7,23 @@ namespace rosmath {
 
 namespace random {
 
+size_t uniform_number(
+    const size_t min,
+    const size_t max)
+{
+    return std::uniform_int_distribution<size_t>(min, max)(engine);
+}
+
+std::vector<size_t> uniform_numbers(
+    const size_t min,
+    const size_t max,
+    const size_t size)
+{
+    std::vector<size_t> ret(size);
+    uniform_fill(ret, min, max);
+    return ret;
+}
+
 double uniform_number(const double min, const double max)
 {
     return std::uniform_real_distribution<double>(min, max)(engine);
@@ -74,6 +91,17 @@ geometry_msgs::Quaternion uniform_quaternion(
     geometry_msgs::Quaternion q;
     q <<= q_eig;
     return q;
+}
+
+void uniform_fill(
+    std::vector<size_t>& data, 
+    const size_t min,
+    const size_t max)
+{
+    std::uniform_int_distribution<size_t> dist(min, max);
+    std::generate(data.begin(), data.end(), [&dist](){
+                   return dist(engine);
+               });
 }
 
 void uniform_fill(std::vector<double>& data, const double min, const double max)

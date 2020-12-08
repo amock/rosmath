@@ -3,9 +3,6 @@
 
 #include "math.h"
 #include <random>
-
-
-
 namespace rosmath {
 
 namespace random {
@@ -16,6 +13,15 @@ void seed(size_t seed)
 {
     engine = std::default_random_engine(seed);
 }
+
+size_t uniform_number(
+    const size_t min,
+    const size_t max);
+
+std::vector<size_t> uniform_numbers(
+    const size_t min,
+    const size_t max,
+    const size_t size);
 
 double uniform_number(
     const double min,
@@ -42,6 +48,10 @@ geometry_msgs::Quaternion uniform_quaternion();
 geometry_msgs::Quaternion uniform_quaternion(
     const geometry_msgs::Vector3 axis);
 
+void uniform_fill(
+    std::vector<size_t>& data, 
+    const size_t min,
+    const size_t max);
 
 void uniform_fill(
     std::vector<double>& data, 
