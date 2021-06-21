@@ -184,7 +184,6 @@ std::vector<geometry_msgs::Point> normal_points(
     return ret;
 }
 
-
 void normal_fill(
     std::vector<double>& data,
     const double mu,
@@ -210,6 +209,70 @@ void normal_fill(
             p.z = distz(engine);
             return p;
         });
+}
+
+Normal::Normal(const Eigen::VectorXd& mean, 
+            const Eigen::MatrixXd& cov)
+:m_mean(mean)
+,m_cov(cov)
+{
+    m_cov_inv = m_cov.inverse();
+    m_det = m_cov.determinant();
+
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigen_solver(cov);
+    Eigen::MatrixXd eigenvectors = eigen_solver.eigenvectors().real();
+
+    // Find the eigenvalues of the covariance matrix
+    Eigen::MatrixXd eigenvalues = eigen_solver.eigenvalues().real().asDiagonal();
+    
+    // Find the transformation matrix
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es(eigenvalues);
+    Eigen::MatrixXd sqrt_eigenvalues = es.operatorSqrt();
+    m_transform = eigenvectors * sqrt_eigenvalues;
+}
+
+Normal::~Normal()
+{
+    
+}
+
+double Normal::pdf(const Eigen::VectorXd& X) const
+{
+    double dim = X.rows();
+    double quadform  = (X - m_mean).transpose() * m_cov_inv * (X - m_mean);
+    double invnorm = std::pow(SQRT2PI, dim) * std::sqrt(m_det);
+    return exp(-0.5 * quadform) / invnorm;
+}
+
+Eigen::VectorXd Normal::sample() const
+{
+    std::normal_distribution<double> dist(0.0, 1.0);
+    size_t dim = m_mean.rows();
+    Eigen::VectorXd x(dim);
+
+    for(size_t i=0; i<dim; i++)
+    {
+        x(i) = dist(engine);
+    }
+
+    return m_transform * x + m_mean;
+}
+
+Eigen::MatrixXd Normal::samples(size_t N) const
+{
+    std::normal_distribution<double> dist(0.0, 1.0);
+    size_t dim = m_mean.rows();
+    Eigen::MatrixXd samples(dim, N);
+
+    for(size_t i=0; i<dim; i++)
+    {
+        for(size_t j=0; j<N; j++)
+        {
+            samples(i,j) = dist(engine);
+        }
+    }
+
+    return m_transform * samples + m_mean.replicate(1, N);
 }
 
 } // namespace random

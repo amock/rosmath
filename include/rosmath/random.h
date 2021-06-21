@@ -7,6 +7,8 @@ namespace rosmath {
 
 namespace random {
 
+constexpr static double SQRT2PI = std::sqrt(2 * M_PI);
+
 std::default_random_engine engine;
 
 void seed(size_t seed)
@@ -93,6 +95,43 @@ void normal_fill(
     std::vector<geometry_msgs::Point>& data,
     const geometry_msgs::Point mu,
     const geometry_msgs::Point sigma);
+
+
+/**
+ * @brief General Normal Distribution Class
+ * 
+ * Improved Version of http://blog.sarantop.com/notes/mvn
+ * 
+ */
+class Normal {
+public:
+    Normal(const Eigen::VectorXd& mean, 
+            const Eigen::MatrixXd& cov);
+
+    ~Normal();
+
+    // N(X)
+    double pdf(const Eigen::VectorXd& X) const;
+    
+    // sample
+    Eigen::VectorXd sample() const;
+
+    Eigen::MatrixXd samples(size_t N) const;
+
+private:
+    Eigen::VectorXd m_mean;
+    Eigen::MatrixXd m_cov;
+
+    // other
+
+    // PDF
+    Eigen::MatrixXd m_cov_inv;
+    double m_det;
+
+    // Transform for samples
+    Eigen::MatrixXd m_transform;
+};
+
 
 } // namespace random
 

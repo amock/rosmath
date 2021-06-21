@@ -3,9 +3,7 @@
 
 #include <tuple>
 #include <type_traits>
-
 namespace rosmath {
-
 template <typename T, typename Tuple>
 struct has_type;
 

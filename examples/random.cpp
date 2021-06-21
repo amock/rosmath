@@ -4,12 +4,10 @@
 #include <rosmath/stats.h>
 #include <time.h>
 
-
 using namespace rosmath;
 
 int main(int argc, char** argv)
 {
-
     size_t seed = time(NULL);
 
     random::seed(seed);
@@ -56,6 +54,42 @@ int main(int argc, char** argv)
     ROS_INFO_STREAM(st.variance);
 
     pca(points);
+
+
+    // Multivariate Normal
+    std::cout << "Multivariate Normal" << std::endl;
+
+    Eigen::VectorXd mean(5);
+    Eigen::MatrixXd cov(5,5);
+    cov.setIdentity();
+    mean.setZero();
+    mean(3) = 2.0;
+
+    random::Normal N(mean, cov);
+
+    std::cout << "100000 Samples" << std::endl;
+    // std::vector<Eigen::VectorXd> samples;
+    // for(size_t i=0; i<1000; i++)
+    // {
+    //     samples.push_back(N.sample());
+    // }
+
+    Eigen::MatrixXd samples2 = N.samples(100000);
+    std::cout << samples2.rows() << "x" << samples2.cols() << std::endl;
+
+    std::cout << "Calculate Mean: " << std::endl;
+    Eigen::VectorXd mean2(5);
+    mean2.setZero();
+
+    for(size_t i=0; i<100000; i++)
+    {
+        auto sample =  samples2.block<5,1>(0,i);
+        mean2 += sample;
+    }
+
+    mean2 /= 100000.0;
+
+    std::cout << mean2 << std::endl;
 
 
     return 0;
