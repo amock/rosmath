@@ -6,7 +6,7 @@
 
 using namespace rosmath;
 
-int main(int argc, char** argv)
+void random_simple()
 {
     size_t seed = time(NULL);
 
@@ -54,6 +54,10 @@ int main(int argc, char** argv)
     ROS_INFO_STREAM(st.variance);
 
     pca(points);
+}
+
+void normal_sampling_fits()
+{
 
 
     // Multivariate Normal
@@ -79,25 +83,56 @@ int main(int argc, char** argv)
     std::cout << Nest.mean() << std::endl;
     std::cout << Nest.cov() << std::endl;
 
-    std::cout << "KLD N -> Nest" << std::endl;
-    std::cout << N.kld(Nest) << std::endl;
-    Eigen::VectorXd mean2(5);
-    mean2.setZero();
-    mean2(3) = 0.0;
-    random::Normal Nbad(mean2, cov * 2.0);
-    std::cout << N.kld(Nbad) << std::endl;
+    // TODO: multivariate fit to X and Y
+}
 
-    std::cout << "Joint Distributions" << std::endl;
-    auto Nmerged = N.joint(Nbad);
+void normal_distribution_measures()
+{
+    Eigen::VectorXd mu1(3), mu2(3);
+    Eigen::MatrixXd cov1(3,3), cov2(3,3);
+    mu1.setZero();
+    mu2.setZero();
+    cov1.setIdentity();
+    cov2.setIdentity();
 
-    std::cout << "Nmerged " << std::endl;
+    mu1(0) = 1.0;
+    mu2(0) = 2.0;
+    cov2 *= 2.0;
 
-    std::cout << Nmerged.mean() << std::endl;
-    std::cout << Nmerged.cov() << std::endl;
+    random::Normal N1(mu1, cov1);
+    random::Normal N2(mu2, cov2);
 
-    // std::cout << "Fit Normal Distribution to X,Y samples" << std::endl;
-    // auto sY = N.pdf(sX);
-    // auto Nest2 = random::Normal::fit(sX, sY);
+    std::cout << "Fisher: " << std::endl;
+    std::cout << " - N1 -> N2: " << random::fisher_information(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << random::fisher_information(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << random::fisher_information(N1, N1) << std::endl;
+
+    std::cout << "KLD: " << std::endl;
+    std::cout << " - N1 -> N2: " << random::kullback_leibler_diveregence(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << random::kullback_leibler_diveregence(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << random::kullback_leibler_diveregence(N1, N1) << std::endl;
+
+    std::cout << "Wasserstein: " << std::endl;
+    std::cout << " - N1 -> N2: " << random::wasserstein(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << random::wasserstein(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << random::wasserstein(N1, N1) << std::endl;
+
+    std::cout << "Hellinger: " << std::endl;
+    std::cout << " - N1 -> N2: " << random::hellinger(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << random::hellinger(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << random::hellinger(N1, N1) << std::endl;
+
+
+}
+
+int main(int argc, char** argv)
+{
+    random_simple();
+    normal_sampling_fits();
+
+
+    normal_distribution_measures();
+
 
     return 0;
 }

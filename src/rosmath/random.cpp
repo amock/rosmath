@@ -3,6 +3,8 @@
 
 #include "rosmath/eigen/conversions.h"
 
+#include <unsupported/Eigen/MatrixFunctions>
+
 namespace rosmath {
 
 namespace random {
@@ -339,13 +341,6 @@ Normal Normal::fit(
     return Normal(mean, cov);
 }
 
-double Normal::kld(const Normal& N) const
-{
-    // this: N1, N: N0
-    double dim = m_mean.rows();
-    return 0.5 * ( ( m_cov_inv * N.cov() ).trace() + mahalanobis_dist(N.mean(), m_cov_inv, m_mean) - dim + std::log(m_det / N.covDet()) );
-}
-
 Normal Normal::joint(const Normal& N) const
 {
     Eigen::MatrixXd JI = (N.cov() + m_cov).inverse();   
@@ -369,6 +364,42 @@ Normal joint(const std::vector<Normal>& Ns)
     }
 
     return N;
+}
+
+double kullback_leibler_diveregence(const Normal& N1, const Normal& N2)
+{
+    // N1: N1, N2: N0
+    double dim = N1.mean().rows();
+    return 0.5 * ( ( N1.covInv() * N2.cov() ).trace() + mahalanobis_dist(N2.mean(), N1.covInv(), N1.mean()) - dim + std::log(N1.covDet() / N2.covDet()) );
+}
+
+double fisher_information(const Normal& N1, const Normal& N2)
+{
+    return (N2.covInv() * (N1.mean() - N2.mean())).squaredNorm() + (N2.covInv() * N2.covInv() * N1.cov() - 2.0 * N2.covInv() + N1.covInv() ).trace();
+}
+
+double wasserstein(
+    const Normal& N1,
+    const Normal& N2)
+{
+    Eigen::MatrixXd cov2sqrt = N2.cov().sqrt();
+    return std::sqrt((N2.mean() - N1.mean()).squaredNorm() + 
+            (
+                N2.cov() + N1.cov() 
+                - 2 * (
+                    cov2sqrt * N1.cov() * cov2sqrt 
+                ).sqrt()
+            ).trace());
+}
+
+double hellinger(
+    const Normal& N1,
+    const Normal& N2)
+{
+    double combDet1 = (N2.cov() * N1.cov()).determinant();
+    double combDet2 = ((N2.cov() + N1.cov())/2.0).determinant();
+    return 2.0 - 2.0 * std::sqrt(std::sqrt(combDet1)) / std::sqrt(combDet2) 
+       * std::exp(-1.0/4.0 * mahalanobis_dist(N2.mean(), (N2.cov() + N1.cov()).inverse(), N1.mean() ) );
 }
 
 } // namespace random
