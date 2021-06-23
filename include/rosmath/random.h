@@ -96,6 +96,10 @@ void normal_fill(
     const geometry_msgs::Point mu,
     const geometry_msgs::Point sigma);
 
+double mahalanobis_dist(
+    const Eigen::VectorXd& mean, 
+    const Eigen::MatrixXd& covInv,
+    const Eigen::VectorXd& X);
 
 /**
  * @brief General Normal Distribution Class
@@ -110,13 +114,32 @@ public:
 
     ~Normal();
 
+    double mahalanobisDist(const Eigen::VectorXd& X) const;
+
     // N(X)
     double pdf(const Eigen::VectorXd& X) const;
+
+    Eigen::VectorXd pdf(const Eigen::MatrixXd& X) const;
+
+    Eigen::VectorXd mean() const;
+    Eigen::MatrixXd cov() const;
+    Eigen::MatrixXd covInv() const;
+    double covDet() const;
     
+
+
     // sample
     Eigen::VectorXd sample() const;
 
     Eigen::MatrixXd samples(size_t N) const;
+
+    static Normal fit(const Eigen::MatrixXd& sX);
+
+    static Normal fit(
+        const Eigen::MatrixXd& sX, 
+        const Eigen::VectorXd& sY);
+
+    double kld(const Normal& N) const;
 
 private:
     Eigen::VectorXd m_mean;

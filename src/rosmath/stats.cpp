@@ -100,10 +100,6 @@ void pca(
                        << ": " << es.eigenvalues()(1) << std::endl;
     std::cout << "-- " << es.eigenvectors().col(0).transpose() 
                        << ": " << es.eigenvalues()(0) << std::endl;
-    
 }
-
-
-
 
 } // namespace rosmath

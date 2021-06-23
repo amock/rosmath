@@ -211,6 +211,14 @@ void normal_fill(
         });
 }
 
+double mahalanobis_dist(
+    const Eigen::VectorXd& mean, 
+    const Eigen::MatrixXd& covInv,
+    const Eigen::VectorXd& X)
+{
+    return (X - mean).transpose() * covInv * (X - mean);
+}
+
 Normal::Normal(const Eigen::VectorXd& mean, 
             const Eigen::MatrixXd& cov)
 :m_mean(mean)
@@ -236,12 +244,27 @@ Normal::~Normal()
     
 }
 
+double Normal::mahalanobisDist(const Eigen::VectorXd& X) const
+{
+    return mahalanobis_dist(m_mean, m_cov_inv, X);
+}
+
 double Normal::pdf(const Eigen::VectorXd& X) const
 {
     double dim = X.rows();
-    double quadform  = (X - m_mean).transpose() * m_cov_inv * (X - m_mean);
     double invnorm = std::pow(SQRT2PI, dim) * std::sqrt(m_det);
-    return exp(-0.5 * quadform) / invnorm;
+    return exp(-0.5 * mahalanobisDist(X)) / invnorm;
+}
+
+Eigen::VectorXd Normal::pdf(const Eigen::MatrixXd& X) const
+{
+    size_t dim = X.rows();
+    Eigen::VectorXd ret(X.cols());
+    for(size_t i=0; i<X.cols(); i++)
+    {
+        ret(i) = pdf(Eigen::VectorXd(X.block(0,i,dim,1)));
+    }
+    return ret;
 }
 
 Eigen::VectorXd Normal::sample() const
@@ -273,6 +296,53 @@ Eigen::MatrixXd Normal::samples(size_t N) const
     }
 
     return m_transform * samples + m_mean.replicate(1, N);
+}
+
+Eigen::VectorXd Normal::mean() const
+{
+    return m_mean;
+}
+
+Eigen::MatrixXd Normal::cov() const
+{
+    return m_cov;
+}
+
+Eigen::MatrixXd Normal::covInv() const
+{
+    return m_cov_inv;
+}
+
+double Normal::covDet() const
+{
+    return m_det;
+}
+
+Normal Normal::fit(const Eigen::MatrixXd& sX)
+{
+    size_t dim = sX.rows();
+    Eigen::VectorXd mean = sX.rowwise().mean();
+    auto centered = sX.colwise() - mean;
+    auto cov = (centered * centered.adjoint()) / double(sX.cols() - 1);
+    return Normal(mean, cov);
+}
+
+Normal Normal::fit(
+        const Eigen::MatrixXd& sX, 
+        const Eigen::VectorXd& sY)
+{
+    size_t dim = sX.rows();
+    Eigen::VectorXd mean = sX.rowwise().mean();
+    auto centered = sX.colwise() - mean;
+    auto cov = (centered * centered.adjoint()) / double(sX.cols() - 1);
+    return Normal(mean, cov);    
+}
+
+double Normal::kld(const Normal& N) const
+{
+    // this: N1, N: N0
+    double dim = m_mean.rows();
+    return 0.5 * ( ( m_cov_inv * N.cov() ).trace() + mahalanobis_dist(N.mean(), m_cov_inv, m_mean) - dim + std::log(m_det / N.covDet()) );
 }
 
 } // namespace random

@@ -68,29 +68,21 @@ int main(int argc, char** argv)
     random::Normal N(mean, cov);
 
     std::cout << "100000 Samples" << std::endl;
-    // std::vector<Eigen::VectorXd> samples;
-    // for(size_t i=0; i<1000; i++)
-    // {
-    //     samples.push_back(N.sample());
-    // }
+    Eigen::MatrixXd sX = N.samples(100000);
+    std::cout << "Samples: " << std::endl;
+    std::cout << sX.rows() << "x" << sX.cols() << std::endl;
 
-    Eigen::MatrixXd samples2 = N.samples(100000);
-    std::cout << samples2.rows() << "x" << samples2.cols() << std::endl;
+    std::cout << "Fit Normal Distribution to X samples" << std::endl;
+    random::Normal Nest = random::Normal::fit(sX);
+    std::cout << Nest.mean() << std::endl;
+    std::cout << Nest.cov() << std::endl;
 
-    std::cout << "Calculate Mean: " << std::endl;
-    Eigen::VectorXd mean2(5);
-    mean2.setZero();
+    std::cout << "KLD N -> Nest" << std::endl;
+    std::cout << N.kld(Nest) << std::endl;
 
-    for(size_t i=0; i<100000; i++)
-    {
-        auto sample =  samples2.block<5,1>(0,i);
-        mean2 += sample;
-    }
-
-    mean2 /= 100000.0;
-
-    std::cout << mean2 << std::endl;
-
+    std::cout << "Fit Normal Distribution to X,Y samples" << std::endl;
+    auto sY = N.pdf(sX);
+    auto Nest2 = random::Normal::fit(sX, sY);
 
     return 0;
 }
