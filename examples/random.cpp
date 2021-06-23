@@ -65,6 +65,8 @@ int main(int argc, char** argv)
     mean.setZero();
     mean(3) = 2.0;
 
+    std::cout << cov << std::endl;
+
     random::Normal N(mean, cov);
 
     std::cout << "100000 Samples" << std::endl;
@@ -79,10 +81,23 @@ int main(int argc, char** argv)
 
     std::cout << "KLD N -> Nest" << std::endl;
     std::cout << N.kld(Nest) << std::endl;
+    Eigen::VectorXd mean2(5);
+    mean2.setZero();
+    mean2(3) = 0.0;
+    random::Normal Nbad(mean2, cov * 2.0);
+    std::cout << N.kld(Nbad) << std::endl;
 
-    std::cout << "Fit Normal Distribution to X,Y samples" << std::endl;
-    auto sY = N.pdf(sX);
-    auto Nest2 = random::Normal::fit(sX, sY);
+    std::cout << "Joint Distributions" << std::endl;
+    auto Nmerged = N.joint(Nbad);
+
+    std::cout << "Nmerged " << std::endl;
+
+    std::cout << Nmerged.mean() << std::endl;
+    std::cout << Nmerged.cov() << std::endl;
+
+    // std::cout << "Fit Normal Distribution to X,Y samples" << std::endl;
+    // auto sY = N.pdf(sX);
+    // auto Nest2 = random::Normal::fit(sX, sY);
 
     return 0;
 }

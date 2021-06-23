@@ -331,11 +331,12 @@ Normal Normal::fit(
         const Eigen::MatrixXd& sX, 
         const Eigen::VectorXd& sY)
 {
+    throw std::runtime_error("TODO: implement");
     size_t dim = sX.rows();
     Eigen::VectorXd mean = sX.rowwise().mean();
     auto centered = sX.colwise() - mean;
     auto cov = (centered * centered.adjoint()) / double(sX.cols() - 1);
-    return Normal(mean, cov);    
+    return Normal(mean, cov);
 }
 
 double Normal::kld(const Normal& N) const
@@ -343,6 +344,31 @@ double Normal::kld(const Normal& N) const
     // this: N1, N: N0
     double dim = m_mean.rows();
     return 0.5 * ( ( m_cov_inv * N.cov() ).trace() + mahalanobis_dist(N.mean(), m_cov_inv, m_mean) - dim + std::log(m_det / N.covDet()) );
+}
+
+Normal Normal::joint(const Normal& N) const
+{
+    Eigen::MatrixXd JI = (N.cov() + m_cov).inverse();   
+    Eigen::MatrixXd cov = N.cov() * m_cov * JI;
+    Eigen::VectorXd mean = N.cov() * JI * m_mean + m_cov * JI * N.mean();
+    return Normal(mean, cov);
+}
+
+Normal Normal::transform(const Eigen::MatrixXd& T) const
+{
+    return Normal(T * m_mean, T * m_cov * T.transpose());
+}
+
+Normal joint(const std::vector<Normal>& Ns)
+{
+    Normal N = Ns[0];
+    
+    for(size_t i=1; i<Ns.size(); i++)
+    {
+        N = N.joint(Ns[i]);
+    }
+
+    return N;
 }
 
 } // namespace random

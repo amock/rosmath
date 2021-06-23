@@ -106,6 +106,9 @@ double mahalanobis_dist(
  * 
  * Improved Version of http://blog.sarantop.com/notes/mvn
  * 
+ * TODO: 
+ * - Test class functions for correctness
+ * - Implement multivariate fit to X and Y values
  */
 class Normal {
 public:
@@ -126,8 +129,6 @@ public:
     Eigen::MatrixXd covInv() const;
     double covDet() const;
     
-
-
     // sample
     Eigen::VectorXd sample() const;
 
@@ -140,6 +141,11 @@ public:
         const Eigen::VectorXd& sY);
 
     double kld(const Normal& N) const;
+
+    // is this a joint?
+    Normal joint(const Normal& N) const;
+
+    Normal transform(const Eigen::MatrixXd& T) const;
 
 private:
     Eigen::VectorXd m_mean;
@@ -155,6 +161,8 @@ private:
     Eigen::MatrixXd m_transform;
 };
 
+
+Normal joint(const std::vector<Normal>& Ns);
 
 } // namespace random
 
