@@ -398,8 +398,8 @@ double hellinger(
 {
     double combDet1 = (N2.cov() * N1.cov()).determinant();
     double combDet2 = ((N2.cov() + N1.cov())/2.0).determinant();
-    return 2.0 - 2.0 * std::sqrt(std::sqrt(combDet1)) / std::sqrt(combDet2) 
-       * std::exp(-1.0/4.0 * mahalanobis_dist(N2.mean(), (N2.cov() + N1.cov()).inverse(), N1.mean() ) );
+    return std::sqrt(2.0 - 2.0 * std::sqrt(std::sqrt(combDet1)) / std::sqrt(combDet2) 
+       * std::exp(-1.0/4.0 * mahalanobis_dist(N2.mean(), (N2.cov() + N1.cov()).inverse(), N1.mean() ) ) );
 }
 
 } // namespace random
