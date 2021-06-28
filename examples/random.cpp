@@ -2,6 +2,7 @@
 #include <iostream>
 #include <rosmath/random.h>
 #include <rosmath/stats.h>
+#include <rosmath/eigen/stats.h>
 #include <time.h>
 
 using namespace rosmath;
@@ -48,7 +49,7 @@ void random_simple()
     // ROS_INFO_STREAM(p_mean);
 
 
-    auto st = stats<PointMean, PointVariance>(points);
+    auto st = calculate_stats<PointMean, PointVariance>(points);
 
     ROS_INFO_STREAM(st.mean);
     ROS_INFO_STREAM(st.variance);
@@ -71,7 +72,7 @@ void normal_sampling_fits()
 
     std::cout << cov << std::endl;
 
-    random::Normal N(mean, cov);
+    stats::Normal N(mean, cov);
 
     std::cout << "100000 Samples" << std::endl;
     Eigen::MatrixXd sX = N.samples(100000);
@@ -79,7 +80,7 @@ void normal_sampling_fits()
     std::cout << sX.rows() << "x" << sX.cols() << std::endl;
 
     std::cout << "Fit Normal Distribution to X samples" << std::endl;
-    random::Normal Nest = random::Normal::fit(sX);
+    stats::Normal Nest = stats::Normal::fit(sX);
     std::cout << Nest.mean() << std::endl;
     std::cout << Nest.cov() << std::endl;
 
@@ -88,41 +89,50 @@ void normal_sampling_fits()
 
 void normal_distribution_measures()
 {
-    Eigen::VectorXd mu1(3), mu2(3);
-    Eigen::MatrixXd cov1(3,3), cov2(3,3);
+    Eigen::VectorXd mu1(3), mu2(3), mu3(3);
+    Eigen::MatrixXd cov1(3,3), cov2(3,3), cov3(3,3);
     mu1.setZero();
     mu2.setZero();
+    mu3.setZero();
     cov1.setIdentity();
     cov2.setIdentity();
+    cov3.setIdentity();
 
     mu1(0) = 1.0;
     mu2(0) = 2.0;
+    mu3(0) = 0.0;
     cov2 *= 2.0;
+    cov3 /= 2.0;
 
-    random::Normal N1(mu1, cov1);
-    random::Normal N2(mu2, cov2);
+    stats::Normal N1(mu1, cov1);
+    stats::Normal N2(mu2, cov2);
+    stats::Normal N3(mu3, cov3);
+
+    std::cout << "N1(1, 1), N2(2, 2), N3(0, 0.5)" << std::endl;
 
     std::cout << "Fisher: " << std::endl;
-    std::cout << " - N1 -> N2: " << random::fisher_information(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << random::fisher_information(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << random::fisher_information(N1, N1) << std::endl;
+    std::cout << " - N1 -> N2: " << stats::fisher_information(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << stats::fisher_information(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << stats::fisher_information(N1, N1) << std::endl;
+    std::cout << " - N1 -> N3: " << stats::fisher_information(N1, N3) << std::endl;
+    std::cout << " - N3 -> N1: " << stats::fisher_information(N3, N1) << std::endl;
 
     std::cout << "KLD: " << std::endl;
-    std::cout << " - N1 -> N2: " << random::kullback_leibler_diveregence(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << random::kullback_leibler_diveregence(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << random::kullback_leibler_diveregence(N1, N1) << std::endl;
+    std::cout << " - N1 -> N2: " << stats::kullback_leibler_diveregence(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << stats::kullback_leibler_diveregence(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << stats::kullback_leibler_diveregence(N1, N1) << std::endl;
+    std::cout << " - N1 -> N3: " << stats::kullback_leibler_diveregence(N1, N3) << std::endl;
+    std::cout << " - N3 -> N1: " << stats::kullback_leibler_diveregence(N3, N1) << std::endl;
 
     std::cout << "Wasserstein: " << std::endl;
-    std::cout << " - N1 -> N2: " << random::wasserstein(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << random::wasserstein(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << random::wasserstein(N1, N1) << std::endl;
+    std::cout << " - N1 -> N2: " << stats::wasserstein(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << stats::wasserstein(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << stats::wasserstein(N1, N1) << std::endl;
 
     std::cout << "Hellinger: " << std::endl;
-    std::cout << " - N1 -> N2: " << random::hellinger(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << random::hellinger(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << random::hellinger(N1, N1) << std::endl;
-
-
+    std::cout << " - N1 -> N2: " << stats::hellinger(N1, N2) << std::endl;
+    std::cout << " - N2 -> N1: " << stats::hellinger(N2, N1) << std::endl;
+    std::cout << " - N1 -> N1: " << stats::hellinger(N1, N1) << std::endl;
 }
 
 int main(int argc, char** argv)

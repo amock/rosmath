@@ -51,6 +51,7 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/conversions.cpp
   src/${PROJECT_NAME}/eigen/conversions.cpp
+  src/${PROJECT_NAME}/eigen/stats.cpp
   src/${PROJECT_NAME}/math.cpp
   src/${PROJECT_NAME}/misc.cpp
   src/${PROJECT_NAME}/random.cpp

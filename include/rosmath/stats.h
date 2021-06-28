@@ -3,8 +3,15 @@
 
 #include "math.h"
 #include <random>
+#include <cmath>
 
 namespace rosmath {
+
+namespace stats {
+
+constexpr static double SQRT2PI = std::sqrt(2 * M_PI);
+
+} // namespace stats
 
 template<typename ...Tp>
 struct Stats : public Tp... 
@@ -91,7 +98,7 @@ void pca(
     const std::vector<geometry_msgs::Point>& points);
 
 template<typename ...Tp>
-Stats<Tp...> stats(
+Stats<Tp...> calculate_stats(
     const std::vector<geometry_msgs::Point>& points)
 {
     using StatsType = Stats<Tp...>;
@@ -130,7 +137,6 @@ Stats<Tp...> stats(
     
     return ret;
 }
-
 
 } // namespace rosmath
 
