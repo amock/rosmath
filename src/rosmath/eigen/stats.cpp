@@ -113,6 +113,11 @@ double Normal::covDet() const
     return m_det;
 }
 
+size_t Normal::dim() const
+{
+    return m_cov.rows();
+}
+
 Normal Normal::fit(const Eigen::MatrixXd& sX)
 {
     size_t dim = sX.rows();
@@ -134,7 +139,7 @@ Normal Normal::fit(
     return Normal(mean, cov);
 }
 
-Normal Normal::joint(const Normal& N) const
+Normal Normal::fuse(const Normal& N) const
 {
     Eigen::MatrixXd JI = (N.cov() + m_cov).inverse();   
     Eigen::MatrixXd cov = N.cov() * m_cov * JI;
@@ -147,23 +152,27 @@ Normal Normal::transform(const Eigen::MatrixXd& T) const
     return Normal(T * m_mean, T * m_cov * T.transpose());
 }
 
-Normal joint(const std::vector<Normal>& Ns)
+Normal Normal::add(const Normal& N) const
+{
+    return Normal(N.mean() + m_mean, N.cov() + m_cov);
+}
+
+Normal fuse(const std::vector<Normal>& Ns)
 {
     Normal N = Ns[0];
     
     for(size_t i=1; i<Ns.size(); i++)
     {
-        N = N.joint(Ns[i]);
+        N = N.fuse(Ns[i]);
     }
 
     return N;
 }
 
-double kullback_leibler_diveregence(const Normal& N1, const Normal& N2)
+double kullback_leibler_divergence(const Normal& N0, const Normal& N1)
 {
-    // N1: N1, N2: N0
     double dim = N1.mean().rows();
-    return 0.5 * ( ( N1.covInv() * N2.cov() ).trace() + mahalanobis_dist(N2.mean(), N1.covInv(), N1.mean()) - dim + std::log(N1.covDet() / N2.covDet()) );
+    return 0.5 * ( ( N1.covInv() * N0.cov() ).trace() + mahalanobis_dist(N0.mean(), N1.covInv(), N1.mean()) - dim + std::log(N1.covDet() / N0.covDet()) );
 }
 
 double fisher_information(const Normal& N1, const Normal& N2)
@@ -193,6 +202,20 @@ double hellinger(
     double combDet2 = ((N2.cov() + N1.cov())/2.0).determinant();
     return std::sqrt(2.0 - 2.0 * std::sqrt(std::sqrt(combDet1)) / std::sqrt(combDet2) 
        * std::exp(-1.0/4.0 * mahalanobis_dist(N2.mean(), (N2.cov() + N1.cov()).inverse(), N1.mean() ) ) );
+}
+
+double entropy(
+    const Normal& N)
+{
+    double dim = static_cast<double>(N.dim());
+    return 0.5 * std::log(N.covDet()) + 0.5 * dim * (1 + std::log(2 * M_PI) );
+}
+
+double cross_entropy(
+    const Normal& P, 
+    const Normal& Q)
+{
+    return entropy(P) + kullback_leibler_divergence(P, Q);
 }
 
 } // namespace stats

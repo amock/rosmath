@@ -111,28 +111,100 @@ void normal_distribution_measures()
     std::cout << "N1(1, 1), N2(2, 2), N3(0, 0.5)" << std::endl;
 
     std::cout << "Fisher: " << std::endl;
-    std::cout << " - N1 -> N2: " << stats::fisher_information(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << stats::fisher_information(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << stats::fisher_information(N1, N1) << std::endl;
-    std::cout << " - N1 -> N3: " << stats::fisher_information(N1, N3) << std::endl;
-    std::cout << " - N3 -> N1: " << stats::fisher_information(N3, N1) << std::endl;
+    std::cout << " - N1 | N2: " << stats::fisher_information(N1, N2) << std::endl;
+    std::cout << " - N2 | N1: " << stats::fisher_information(N2, N1) << std::endl;
+    std::cout << " - N1 | N1: " << stats::fisher_information(N1, N1) << std::endl;
+    std::cout << " - N1 | N3: " << stats::fisher_information(N1, N3) << std::endl;
+    std::cout << " - N3 | N1: " << stats::fisher_information(N3, N1) << std::endl;
 
     std::cout << "KLD: " << std::endl;
-    std::cout << " - N1 -> N2: " << stats::kullback_leibler_diveregence(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << stats::kullback_leibler_diveregence(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << stats::kullback_leibler_diveregence(N1, N1) << std::endl;
-    std::cout << " - N1 -> N3: " << stats::kullback_leibler_diveregence(N1, N3) << std::endl;
-    std::cout << " - N3 -> N1: " << stats::kullback_leibler_diveregence(N3, N1) << std::endl;
+    std::cout << " - N1 | N2: " << stats::kullback_leibler_divergence(N1, N2) << std::endl;
+    std::cout << " - N2 | N1: " << stats::kullback_leibler_divergence(N2, N1) << std::endl;
+    std::cout << " - N1 | N1: " << stats::kullback_leibler_divergence(N1, N1) << std::endl;
+    std::cout << " - N1 | N3: " << stats::kullback_leibler_divergence(N1, N3) << std::endl;
+    std::cout << " - N3 | N1: " << stats::kullback_leibler_divergence(N3, N1) << std::endl;
 
     std::cout << "Wasserstein: " << std::endl;
-    std::cout << " - N1 -> N2: " << stats::wasserstein(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << stats::wasserstein(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << stats::wasserstein(N1, N1) << std::endl;
+    std::cout << " - N1 , N2: " << stats::wasserstein(N1, N2) << std::endl;
+    std::cout << " - N2 , N1: " << stats::wasserstein(N2, N1) << std::endl;
+    std::cout << " - N1 , N1: " << stats::wasserstein(N1, N1) << std::endl;
 
     std::cout << "Hellinger: " << std::endl;
-    std::cout << " - N1 -> N2: " << stats::hellinger(N1, N2) << std::endl;
-    std::cout << " - N2 -> N1: " << stats::hellinger(N2, N1) << std::endl;
-    std::cout << " - N1 -> N1: " << stats::hellinger(N1, N1) << std::endl;
+    std::cout << " - N1 , N2: " << stats::hellinger(N1, N2) << std::endl;
+    std::cout << " - N2 , N1: " << stats::hellinger(N2, N1) << std::endl;
+    std::cout << " - N1 , N1: " << stats::hellinger(N1, N1) << std::endl;
+
+    std::cout << "Entropy: " << std::endl;
+    std::cout << " - N1: " << stats::entropy(N1) << std::endl;
+    std::cout << " - N2: " << stats::entropy(N2) << std::endl;
+    std::cout << " - N3: " << stats::entropy(N3) << std::endl;
+
+    std::cout << "Cross-Entropy: " << std::endl;
+    std::cout << " - N1 | N2: " << stats::cross_entropy(N1, N2) << std::endl;
+    std::cout << " - N2 | N1: " << stats::cross_entropy(N2, N1) << std::endl;
+    std::cout << " - N3 | N1: " << stats::cross_entropy(N3, N1) << std::endl;
+    std::cout << " - N1 | N1: " << stats::cross_entropy(N1, N1) << std::endl;
+
+
+
+
+}
+
+
+void stats_example_1d()
+{
+    std::cout << "stats_example_1d" << std::endl;
+    Eigen::VectorXd mean1(1), mean2(1);
+    Eigen::MatrixXd cov1(1,1), cov2(1,1);
+    mean1(0) = 0.0;
+    mean2(0) = 1.0;
+    cov1(0,0) = 1.0;
+    cov2(0,0) = 2.0;
+
+    stats::Normal N1(mean1, cov1), N2(mean2, cov2);
+
+    Eigen::VectorXd X(1);
+    X(0) = 1.0;
+
+    std::cout << "N1(0, 1), N2(1, 2)" << std::endl;
+    std::cout << "N2.pdf(1): " << N2.pdf(X) << std::endl;
+    std::cout << "H(N2): " << stats::H(N2) << std::endl;
+    std::cout << "H(N1): " << stats::H(N1) << std::endl;
+    std::cout << "D_KL(N1, N2): " << stats::D_KL(N1, N2) << std::endl;
+    std::cout << "D_KL(N2, N1): " << stats::D_KL(N2, N1) << std::endl;
+
+    std::cout << "CE(N1, N2): " << stats::cross_entropy(N1, N2) << std::endl;
+    std::cout << "CE(N2, N1): " << stats::cross_entropy(N2, N1) << std::endl;
+    
+
+}
+
+void kalman()
+{
+    Eigen::VectorXd x(3);
+    Eigen::MatrixXd Ex(3,3);
+    x.setZero();
+    Ex.setIdentity();
+
+    Eigen::MatrixXd A(3,3);
+    A.setIdentity();
+    A(0,1) = 0.5;
+    A(1,2) = 0.5;
+
+    stats::Normal X(x, Ex);
+
+    Eigen::VectorXd u(3);
+    Eigen::MatrixXd Eu(3,3);
+    u.setZero();
+    Eu.setIdentity();
+    stats::Normal U(u, Eu);
+
+    auto Xpred = X.transform(A).add(U);
+
+    std::cout << Xpred.mean() << std::endl;
+    std::cout << Xpred.cov() << std::endl;
+
+    auto Xcorrected = Xpred.fuse(X);
 }
 
 int main(int argc, char** argv)
@@ -142,6 +214,10 @@ int main(int argc, char** argv)
 
 
     normal_distribution_measures();
+
+    stats_example_1d();
+
+    // kalman();
 
 
     return 0;

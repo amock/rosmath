@@ -41,6 +41,8 @@ public:
 
     ~Normal();
 
+    size_t dim() const;
+
     double mahalanobisDist(const Eigen::VectorXd& X) const;
 
     // N(X)
@@ -88,9 +90,20 @@ public:
      * Is this maybe a bayesian update instead of a joint?
      * 
      */
-    Normal joint(const Normal& N) const;
+    Normal fuse(const Normal& N) const;
 
+    /**
+     * x' = T*x
+     * Ex' = T*Ex*T.transpose();
+     * 
+     */
     Normal transform(const Eigen::MatrixXd& T) const;
+
+    /**
+     * x' = this->mean() + N.mean()
+     * Ex' = this->cov() + N.cov()
+     */
+    Normal add(const Normal& N) const;
 
 private:
     Eigen::VectorXd m_mean;
@@ -106,31 +119,84 @@ private:
     Eigen::MatrixXd m_transform;
 };
 
-Normal joint(const std::vector<Normal>& Ns);
+Normal fuse(const std::vector<Normal>& Ns);
 
 /**
- * Kullback-Leibler Divergence from N1 to N2
+ * Kullback-Leibler Divergence from N1 to N0
+ * or D_KL(N0 || N1)
  * source: https://en.wikipedia.org/wiki/Multivariate_normal_distribution#Kullback%E2%80%93Leibler_divergence
  */
-double kullback_leibler_diveregence(
-    const Normal& N1, 
-    const Normal& N2);
+double kullback_leibler_divergence(
+    const Normal& N0, 
+    const Normal& N1);
 
 /**
  * Fisher-Information
  * source: https://djalil.chafai.net/blog/2021/02/22/fisher-information-between-two-gaussians/
+ * 
+ * Fisher(N1 | N2)
+ * 
  */
 double fisher_information(
     const Normal& N1,
     const Normal& N2);
 
+/**
+ * Wasserstein Information
+ * source: https://djalil.chafai.net/blog/2021/02/22/fisher-information-between-two-gaussians/
+ * 
+ * Wasserstein(N1, N2)
+ * 
+ */
 double wasserstein(
     const Normal& N1,
     const Normal& N2);
 
+/**
+ * Hellinger Information
+ * source: https://djalil.chafai.net/blog/2021/02/22/fisher-information-between-two-gaussians/
+ * 
+ * Hellinger(N1, N2)
+ * 
+ */
 double hellinger(
     const Normal& N1,
     const Normal& N2);
+
+/**
+ * Shannon-Entropy
+ * 
+ * source: https://arxiv.org/pdf/1408.4755.pdf, section 3.2
+ * 
+ */ 
+double entropy(
+    const Normal& N);
+
+/**
+ * Cross Entropy from Q to P
+ * or: H(P, Q) = H(P) + D_KL(P || Q)
+ * 
+ */
+double cross_entropy(
+    const Normal& P,
+    const Normal& Q
+);
+
+// SHORT CUTS
+inline double H(const Normal& P)
+{
+    return entropy(P);
+} 
+
+inline double H(const Normal& P, const Normal& Q)
+{
+    return cross_entropy(P, Q);
+}
+
+inline double D_KL(const Normal& P, const Normal& Q)
+{
+    return kullback_leibler_divergence(P, Q);
+}
 
 } // namespace stats
 

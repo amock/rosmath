@@ -9,8 +9,6 @@ namespace random {
 
 static std::default_random_engine engine;
 
-// static void seed(size_t seed);
-
 static void seed(size_t seed)
 {
     engine = std::default_random_engine(seed);

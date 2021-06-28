@@ -7,11 +7,6 @@ namespace rosmath {
 
 namespace random {
 
-// void seed(size_t seed)
-// {
-//     engine = std::default_random_engine(seed);
-// }
-
 size_t uniform_number(
     const size_t min,
     const size_t max)
