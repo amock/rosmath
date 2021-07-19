@@ -180,6 +180,17 @@ geometry_msgs::Quaternion add(
     return ret;
 }
 
+geometry_msgs::Point    add(
+    const geometry_msgs::Point& p,
+    const geometry_msgs::Vector3& v)
+{
+    geometry_msgs::Point ret;
+    ret.x = p.x + v.x;
+    ret.y = p.y + v.y;
+    ret.z = p.z + v.z;
+    return ret;
+}
+
 geometry_msgs::Point    sub(const geometry_msgs::Point& a, 
                             const geometry_msgs::Point& b)
 {
@@ -1157,6 +1168,13 @@ geometry_msgs::Quaternion operator+(
     const geometry_msgs::Quaternion& b)
 {
     return add(a, b);
+}
+
+geometry_msgs::Point operator+(
+    const geometry_msgs::Point& p,
+    const geometry_msgs::Vector3& v)
+{
+    return add(p, v);
 }
 
 // PLUS=

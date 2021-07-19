@@ -116,6 +116,8 @@ geometry_msgs::Vector3  add(const geometry_msgs::Vector3& p,
                             const double& scalar);
 geometry_msgs::Point32  add(const geometry_msgs::Point32& p, 
                             const float& scalar);
+geometry_msgs::Point    add(const geometry_msgs::Point& p,
+                            const geometry_msgs::Vector3& v);
 
 geometry_msgs::Quaternion add(
     const geometry_msgs::Quaternion& a,
@@ -388,6 +390,10 @@ geometry_msgs::Point32 operator+(
 geometry_msgs::Quaternion operator+(
     const geometry_msgs::Quaternion& a,
     const geometry_msgs::Quaternion& b);
+
+geometry_msgs::Point operator+(
+    const geometry_msgs::Point& p,
+    const geometry_msgs::Vector3& v);
 
 // PLUS=
 geometry_msgs::Point operator+=(
