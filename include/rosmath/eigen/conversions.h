@@ -16,32 +16,62 @@ namespace rosmath {
 void convert(   const geometry_msgs::Point& from, 
                 Eigen::Vector3d& to);
 
+void convert(   const geometry_msgs::Point& from, 
+                Eigen::Vector3f& to);
+
 void convert(   const Eigen::Vector3d& from,
+                geometry_msgs::Point& to);
+
+void convert(   const Eigen::Vector3f& from,
                 geometry_msgs::Point& to);
 
 void convert(   const geometry_msgs::Point32& from, 
                 Eigen::Vector3f& to);
 
+void convert(   const geometry_msgs::Point32& from, 
+                Eigen::Vector3d& to);
+
 void convert(   const Eigen::Vector3f& from,
+                geometry_msgs::Point32& to);
+
+void convert(   const Eigen::Vector3d& from,
                 geometry_msgs::Point32& to);
 
 void convert(   const geometry_msgs::Vector3& from, 
                 Eigen::Vector3d& to);
 
+void convert(   const geometry_msgs::Vector3& from, 
+                Eigen::Vector3f& to);
+
 void convert(   const Eigen::Vector3d& from,
+                geometry_msgs::Vector3& to);
+
+void convert(   const Eigen::Vector3f& from,
                 geometry_msgs::Vector3& to);
 
 // ROTATIONS
 void convert(   const geometry_msgs::Quaternion& from, 
                 Eigen::Quaterniond& to);
 
+void convert(   const geometry_msgs::Quaternion& from, 
+                Eigen::Quaternionf& to);
+
 void convert(   const Eigen::Quaterniond& from,
+                geometry_msgs::Quaternion& to);
+
+void convert(   const Eigen::Quaternionf& from,
                 geometry_msgs::Quaternion& to);
 
 void convert(   const geometry_msgs::Quaternion& from,
                 Eigen::Matrix3d& to);
 
+void convert(   const geometry_msgs::Quaternion& from,
+                Eigen::Matrix3f& to);
+
 void convert(   const Eigen::Matrix3d& from,
+                geometry_msgs::Quaternion& to);
+
+void convert(   const Eigen::Matrix3f& from,
                 geometry_msgs::Quaternion& to);
 
 void convert(   const Eigen::Matrix3d& from, 
@@ -54,13 +84,25 @@ void convert(   const Eigen::Quaterniond& from,
 void convert(   const geometry_msgs::Transform& from,
                 Eigen::Affine3d& to);
 
+void convert(   const geometry_msgs::Transform& from,
+                Eigen::Affine3f& to);
+
 void convert(   const Eigen::Affine3d& from,
+                geometry_msgs::Transform& to);
+
+void convert(   const Eigen::Affine3f& from,
                 geometry_msgs::Transform& to);
 
 void convert(   const geometry_msgs::Pose& from,
                 Eigen::Affine3d& to);
 
+void convert(   const geometry_msgs::Pose& from,
+                Eigen::Affine3f& to);
+
 void convert(   const Eigen::Affine3d& from,
+                geometry_msgs::Pose& to);
+
+void convert(   const Eigen::Affine3f& from,
                 geometry_msgs::Pose& to);
 
 // OTHER
@@ -97,56 +139,64 @@ void convert(   const std::vector<double>& from,
 //
 /////////////
 
-// POINTS
-Eigen::Vector3d& operator<<=(   Eigen::Vector3d& to,
-                                const geometry_msgs::Point& from);
+template<typename FromT, typename ToT>
+ToT& operator<<=(  ToT& to,
+                    const FromT& from)
+{
+    convert(from, to);
+    return to;
+}
 
-geometry_msgs::Point& operator<<=(  geometry_msgs::Point& to,
-                                    const Eigen::Vector3d& from);
+// // POINTS
+// Eigen::Vector3d& operator<<=(   Eigen::Vector3d& to,
+//                                 const geometry_msgs::Point& from);
 
-Eigen::Vector3f& operator<<=(   Eigen::Vector3f& to,
-                                const geometry_msgs::Point32& from);
+// geometry_msgs::Point& operator<<=(  geometry_msgs::Point& to,
+//                                     const Eigen::Vector3d& from);
 
-geometry_msgs::Point32& operator<<=(    geometry_msgs::Point32& to,
-                                        const Eigen::Vector3f& from);
+// Eigen::Vector3f& operator<<=(   Eigen::Vector3f& to,
+//                                 const geometry_msgs::Point32& from);
 
-Eigen::Vector3d& operator<<=(   Eigen::Vector3d& to,
-                                const geometry_msgs::Vector3& from);
+// geometry_msgs::Point32& operator<<=(    geometry_msgs::Point32& to,
+//                                         const Eigen::Vector3f& from);
 
-geometry_msgs::Vector3& operator<<=(    geometry_msgs::Vector3& to,
-                                        const Eigen::Vector3d& from);
+// Eigen::Vector3d& operator<<=(   Eigen::Vector3d& to,
+//                                 const geometry_msgs::Vector3& from);
 
-// ROTATIONS
-Eigen::Quaterniond& operator<<=(    Eigen::Quaterniond& to,
-                                    const geometry_msgs::Quaternion& from);
+// geometry_msgs::Vector3& operator<<=(    geometry_msgs::Vector3& to,
+//                                         const Eigen::Vector3d& from);
 
-geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
-                                        const Eigen::Quaterniond& from);
+// // ROTATIONS
+// Eigen::Quaterniond& operator<<=(    Eigen::Quaterniond& to,
+//                                     const geometry_msgs::Quaternion& from);
 
-Eigen::Matrix3d& operator<<=(    Eigen::Matrix3d& to,
-                                    const geometry_msgs::Quaternion& from);
+// geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
+//                                         const Eigen::Quaterniond& from);
 
-geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
-                                        const Eigen::Matrix3d& from);
+// Eigen::Matrix3d& operator<<=(    Eigen::Matrix3d& to,
+//                                     const geometry_msgs::Quaternion& from);
 
-Eigen::Quaterniond& operator<<=( Eigen::Quaterniond& to,
-                                 const Eigen::Matrix3d& from);
+// geometry_msgs::Quaternion& operator<<=( geometry_msgs::Quaternion& to,
+//                                         const Eigen::Matrix3d& from);
 
-Eigen::Matrix3d& operator<<=(   Eigen::Matrix3d& to,
-                                const Eigen::Quaterniond& from);
+// Eigen::Quaterniond& operator<<=( Eigen::Quaterniond& to,
+//                                  const Eigen::Matrix3d& from);
 
-// TRANSFORMATIONS
-Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
-                                const geometry_msgs::Transform& from);
+// Eigen::Matrix3d& operator<<=(   Eigen::Matrix3d& to,
+//                                 const Eigen::Quaterniond& from);
 
-geometry_msgs::Transform& operator<<=(  geometry_msgs::Transform& to, 
-                                        const Eigen::Affine3d& from);
+// // TRANSFORMATIONS
+// Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
+//                                 const geometry_msgs::Transform& from);
 
-Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
-                                const geometry_msgs::Pose& from);
+// geometry_msgs::Transform& operator<<=(  geometry_msgs::Transform& to, 
+//                                         const Eigen::Affine3d& from);
 
-geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
-                                    const Eigen::Affine3d& from);
+// Eigen::Affine3d& operator<<=(   Eigen::Affine3d& to, 
+//                                 const geometry_msgs::Pose& from);
+
+// geometry_msgs::Pose& operator<<=(  geometry_msgs::Pose& to, 
+//                                     const Eigen::Affine3d& from);
 
 
 } // namespace rosmath
